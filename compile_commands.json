@@ -5,6 +5,18 @@
             "-c",
             "-std=c++17",
             "-o",
+            "out/join",
+            "join.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode",
+        "file": "join.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
             "out/loop",
             "loop.cpp"
         ],
@@ -29,10 +41,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/join",
-            "join.cpp"
+            "out/immutability",
+            "immutability.cpp"
         ],
         "directory": "/home/alexb/work/bookCode",
-        "file": "join.cpp"
+        "file": "immutability.cpp"
     }
 ]
