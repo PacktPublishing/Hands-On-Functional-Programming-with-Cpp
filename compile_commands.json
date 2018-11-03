@@ -1,0 +1,38 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/loop",
+            "loop.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode",
+        "file": "loop.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/compare",
+            "compare.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode",
+        "file": "compare.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/join",
+            "join.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode",
+        "file": "join.cpp"
+    }
+]
