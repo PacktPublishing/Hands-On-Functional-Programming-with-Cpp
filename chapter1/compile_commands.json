@@ -5,11 +5,11 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/join",
-            "join.cpp"
+            "out/functionalSum",
+            "functionalSum.cpp"
         ],
         "directory": "/home/alexb/work/bookCode",
-        "file": "join.cpp"
+        "file": "functionalSum.cpp"
     },
     {
         "arguments": [
@@ -29,11 +29,11 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/compare",
-            "compare.cpp"
+            "out/immutability",
+            "immutability.cpp"
         ],
         "directory": "/home/alexb/work/bookCode",
-        "file": "compare.cpp"
+        "file": "immutability.cpp"
     },
     {
         "arguments": [
@@ -41,10 +41,22 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/immutability",
-            "immutability.cpp"
+            "out/join",
+            "join.cpp"
         ],
         "directory": "/home/alexb/work/bookCode",
-        "file": "immutability.cpp"
+        "file": "join.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/compare",
+            "compare.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode",
+        "file": "compare.cpp"
     }
 ]
