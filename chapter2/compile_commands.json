@@ -5,10 +5,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/pureFunction",
-            "pureFunction.cpp"
+            "out/sort",
+            "sort.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter2",
-        "file": "pureFunction.cpp"
+        "file": "sort.cpp"
     }
 ]
