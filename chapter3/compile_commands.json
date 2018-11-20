@@ -1,0 +1,86 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/immutabilityPassByReference",
+            "immutabilityPassByReference.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "immutabilityPassByReference.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/add",
+            "add.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "add.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/lambdasAndClasses",
+            "lambdasAndClasses.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "lambdasAndClasses.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/immutabilityPointers",
+            "immutabilityPointers.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "immutabilityPointers.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/lambdaIO",
+            "lambdaIO.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "lambdaIO.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/immutabilityPassByValue",
+            "immutabilityPassByValue.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "immutabilityPassByValue.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/immutableCapture",
+            "immutableCapture.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter3",
+        "file": "immutableCapture.cpp"
+    }
+]
