@@ -33,7 +33,7 @@ int main(){
     cout << addTheFiveWithDefaultValueCaptureForAllButFirst() << endl; // writes 35
 
     int* pFirst = new int(5);
-    auto addToThePointerValue = [&](int second){return *pFirst + second;};
+    auto addToThePointerValue = [&pFirst](int second){return *pFirst + second;};
     cout << addToThePointerValue(10) << endl; // writes 15
     delete pFirst;
 }
