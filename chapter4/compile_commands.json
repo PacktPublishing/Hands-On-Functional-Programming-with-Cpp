@@ -1,0 +1,26 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/shoppingcarttests",
+            "shoppingcartTests.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter4",
+        "file": "shoppingcartTests.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/shoppingcarttests",
+            "shoppingcart.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter4",
+        "file": "shoppingcart.cpp"
+    }
+]
