@@ -5,11 +5,11 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/shoppingcarttests",
-            "shoppingcartTests.cpp"
+            "out/composeFunctions",
+            "composeFunctions.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter4",
-        "file": "shoppingcartTests.cpp"
+        "file": "composeFunctions.cpp"
     },
     {
         "arguments": [
@@ -17,10 +17,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/shoppingcarttests",
-            "shoppingcart.cpp"
+            "out/basicFunctionalComposition",
+            "basicFunctionalComposition.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter4",
-        "file": "shoppingcart.cpp"
+        "file": "basicFunctionalComposition.cpp"
     }
 ]
