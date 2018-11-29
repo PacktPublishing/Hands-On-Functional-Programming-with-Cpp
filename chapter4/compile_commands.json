@@ -5,11 +5,11 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/composeFunctions",
-            "composeFunctions.cpp"
+            "out/decomposeMultipleArguments",
+            "decomposeMultipleArguments.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter4",
-        "file": "composeFunctions.cpp"
+        "file": "decomposeMultipleArguments.cpp"
     },
     {
         "arguments": [
@@ -22,5 +22,17 @@
         ],
         "directory": "/home/alexb/work/bookCode/chapter4",
         "file": "basicFunctionalComposition.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/composeFunctions",
+            "composeFunctions.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter4",
+        "file": "composeFunctions.cpp"
     }
 ]

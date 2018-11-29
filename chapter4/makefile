@@ -1,4 +1,4 @@
-all: basicFunctionalComposition composeFunctions
+all: basicFunctionalComposition composeFunctions decomposeMultipleArguments
 
 .outputFolder:
 	mkdir -p out
@@ -10,6 +10,10 @@ basicFunctionalComposition: .outputFolder
 composeFunctions: .outputFolder
 	g++ -std=c++17 composeFunctions.cpp -o out/composeFunctions
 	./out/composeFunctions
+
+decomposeMultipleArguments: .outputFolder
+	g++ -std=c++17 decomposeMultipleArguments.cpp -o out/decomposeMultipleArguments
+	./out/decomposeMultipleArguments
 
 shoppingcarttests: .outputFolder
 	g++ -std=c++17 shoppingcartTests.cpp -o out/shoppingcarttests

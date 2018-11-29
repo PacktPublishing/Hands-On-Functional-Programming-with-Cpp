@@ -36,3 +36,8 @@ TEST_CASE("Increments square with generic composed lambda"){
     auto incrementSquare = compose(increment, square);
     CHECK_EQ(5, incrementSquare(2));
 }
+
+TEST_CASE("Square the increment"){
+    auto squareIncrement = compose(square, increment);
+    CHECK_EQ(9, squareIncrement(2));
+}
