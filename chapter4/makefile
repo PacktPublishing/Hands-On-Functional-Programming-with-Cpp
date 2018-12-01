@@ -14,10 +14,3 @@ composeFunctions: .outputFolder
 decomposeMultipleArguments: .outputFolder
 	g++ -std=c++17 decomposeMultipleArguments.cpp -o out/decomposeMultipleArguments
 	./out/decomposeMultipleArguments
-
-shoppingcarttests: .outputFolder
-	g++ -std=c++17 shoppingcartTests.cpp -o out/shoppingcarttests
-
-shoppingcart: .outputFolder
-	g++ -std=c++17 shoppingcart.cpp -o out/shoppingcart
-	./out/shoppingcart
