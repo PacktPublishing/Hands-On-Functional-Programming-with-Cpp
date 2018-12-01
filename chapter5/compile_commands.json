@@ -1,0 +1,14 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/basicPartialApplication",
+            "basicPartialApplication.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter5",
+        "file": "basicPartialApplication.cpp"
+    }
+]
