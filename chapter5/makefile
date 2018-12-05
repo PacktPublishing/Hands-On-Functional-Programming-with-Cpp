@@ -1,4 +1,4 @@
-all: basicPartialApplication
+all: basicPartialApplication basicCurrying
 
 .outputFolder:
 	mkdir -p out

@@ -10,5 +10,17 @@
         ],
         "directory": "/home/alexb/work/bookCode/chapter5",
         "file": "basicPartialApplication.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/basicCurrying",
+            "basicCurrying.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter5",
+        "file": "basicCurrying.cpp"
     }
 ]

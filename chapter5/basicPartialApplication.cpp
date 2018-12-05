@@ -69,5 +69,45 @@ TEST_CASE("Adds one number to 10, and then to 20"){
     CHECK_EQ(42, addTo10Plus20(12));
 }
 
+class AddOperation{
+    private:
+        int first;
+        int second;
+
+    public:
+        AddOperation(int first, int second): first(first), second(second){}
+        int add(){ return first + second;}
+};
+
+
+TEST_CASE("Bind member method"){
+    AddOperation operation(41, 1);
+    auto add41And1 = bind(&AddOperation::add, operation); 
+
+    CHECK_EQ(42, add41And1());
+}
+
+TEST_CASE("Partial bind member method no arguments"){
+    auto add = bind(&AddOperation::add, _1); 
+
+    AddOperation operation(41, 1);
+    CHECK_EQ(42, add(operation));
+}
+
+class AddToOperation{
+    private:
+        int first;
+
+    public:
+        AddToOperation(int first): first(first) {}
+        int addTo(int second){ return first + second;}
+};
+
+TEST_CASE("Partial application member method"){
+    AddToOperation operation(41);
+    auto addTo41 = bind(&AddToOperation::addTo, operation, _1); 
+
+    CHECK_EQ(42, addTo41(1));
+}
 
 
