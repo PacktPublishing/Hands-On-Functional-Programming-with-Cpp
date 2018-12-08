@@ -5,6 +5,18 @@
             "-c",
             "-std=c++17",
             "-o",
+            "out/basicCurrying",
+            "basicCurrying.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter5",
+        "file": "basicCurrying.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
             "out/basicPartialApplication",
             "basicPartialApplication.cpp"
         ],
@@ -17,10 +29,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/basicCurrying",
-            "basicCurrying.cpp"
+            "out/removeDuplication",
+            "removeDuplication.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter5",
-        "file": "basicCurrying.cpp"
+        "file": "removeDuplication.cpp"
     }
 ]
