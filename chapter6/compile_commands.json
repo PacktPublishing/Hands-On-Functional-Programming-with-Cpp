@@ -1,0 +1,14 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/stuff",
+            "stuff.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter6",
+        "file": "stuff.cpp"
+    }
+]
