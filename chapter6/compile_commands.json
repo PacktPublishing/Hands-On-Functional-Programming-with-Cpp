@@ -5,10 +5,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/bank",
-            "bank.cpp"
+            "out/ticTacToeResult",
+            "ticTacToeResult.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter6",
-        "file": "bank.cpp"
+        "file": "ticTacToeResult.cpp"
     }
 ]
