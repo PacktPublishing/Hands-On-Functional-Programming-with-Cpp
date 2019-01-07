@@ -6,25 +6,30 @@
 using namespace std;
 using namespace std::placeholders;
 
-auto createAccount = [](string accountOwnerName,  int lastCount){
+auto incrementedAccountId = [](int lastCount){
     return lastCount + 1;
 };
+auto initialAccountId = bind(incrementedAccountId, 0);
 
-auto createFirstAccount = bind(createAccount, _1, 0);
+auto createAccount = [](string accountOwnerName, auto uniqueAccountId){
+    return uniqueAccountId();
+};
 
-TEST_CASE("Adds values"){
+
+TEST_CASE("Create account"){
     string accountOwnerName = "Alex";
 
-    int accountId = createFirstAccount(accountOwnerName);
+    int accountId = createAccount(accountOwnerName, initialAccountId);
 
     CHECK_EQ(1, accountId);
 }
 
-TEST_CASE("Adds values"){
+TEST_CASE("Create second account"){
     string accountOwnerName = "Alex";
 
-    int firstAccountId = createFirstAccount(accountOwnerName);
-    int accountId = createAccount(accountOwnerName, firstAccountId);
+    int firstAccountId = createAccount(accountOwnerName, initialAccountId);
+    auto nextAccountId = bind(incrementedAccountId, firstAccountId);
+    int accountId = createAccount(accountOwnerName, nextAccountId);
 
     CHECK_EQ(2, accountId);
 }
