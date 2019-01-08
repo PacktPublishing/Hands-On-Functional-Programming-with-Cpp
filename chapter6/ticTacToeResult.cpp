@@ -18,11 +18,11 @@ auto transformAll = [](SourceType source,  auto lambda){
 };
 
 auto lineToString = [](const auto line){
-    return transformAll<Line, string>(line, [](auto token) -> char { return token;});
+    return transformAll<decltype(line), string>(line, [](auto token) -> char { return token;});
 };
 
 auto boardToLinesString = [](const auto board){
-    return transformAll<Board, vector<string>>(board, [](Line line) { return lineToString(line); });
+    return transformAll<decltype(board), vector<string>>(board, [](Line line) { return lineToString(line); });
 };
 
 auto boardToString = [](auto const board){
@@ -57,20 +57,20 @@ auto column = [](const auto board, int index){
 auto mainDiagonal = [](const auto board){
     Line diagonal;
     auto range = toRange(board);
-    return transformAll<vector<int>, Line>(range, [&](auto index){ return board[index][index];});
+    return transformAll<decltype(range), Line>(range, [&](auto index){ return board[index][index];});
 };
 
 auto secondaryDiagonal = [](const auto board){
     Line diagonal;
     auto range = toRange(board);
-    return transformAll<vector<int>, Line>(range, [&](auto index){ return board[index][board.size() - index - 1];});
+    return transformAll<decltype(range), Line>(range, [&](auto index){ return board[index][board.size() - index - 1];});
 };
 
 auto all_columns = [](const Board& board) {
     Board result;
     auto range = toRange(board); 
     auto columnForBoardAndIndex = bind(column, board, _1);
-    return transformAll<vector<int>, Board>(range, columnForBoardAndIndex);
+    return transformAll<decltype(range), Board>(range, columnForBoardAndIndex);
 };
 
 auto all_diagonals = [] (auto const board){
@@ -121,13 +121,13 @@ TEST_CASE("all columns"){
 }
 
 TEST_CASE("all diagonals"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    vector<vector<char>> expectedDiagonals = {
+    Board expectedDiagonals = {
         {'X', 'O', 'O'},
         {'X', 'O', ' '}
     };
@@ -136,13 +136,13 @@ TEST_CASE("all diagonals"){
 }
 
 TEST_CASE("all lines, columns and diagonals"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    vector<vector<char>> expected = {
+    Board expected = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'},
@@ -158,7 +158,7 @@ TEST_CASE("all lines, columns and diagonals"){
 }
 
 TEST_CASE("line to string"){
-    vector<char> line = {
+    Line line = {
         ' ', 'X', 'O'
     };
 
@@ -166,7 +166,7 @@ TEST_CASE("line to string"){
 }
 
 TEST_CASE("board to lines string"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -181,7 +181,7 @@ TEST_CASE("board to lines string"){
 }
 
 TEST_CASE("board to string"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -192,13 +192,13 @@ TEST_CASE("board to string"){
 }
 
 TEST_CASE("Line filled with X"){
-    vector<char> line = {'X', 'X', 'X'};
+    Line line = {'X', 'X', 'X'};
 
     CHECK(lineFilledWithX(line));
 }
 
 TEST_CASE("X wins"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -208,16 +208,16 @@ TEST_CASE("X wins"){
 }
 
 TEST_CASE("Project column"){
-    vector<vector<char>> board = {
+    Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    vector<char> expected0 = {'X', ' ', ' '};
+    Line expected0 = {'X', ' ', ' '};
     CHECK_EQ(expected0, column(board, 0));
-    vector<char> expected1 = {'X', 'O', ' '};
+    Line expected1 = {'X', 'O', ' '};
     CHECK_EQ(expected1, column(board, 1));
-    vector<char> expected2 = {'X', ' ', 'O'};
+    Line expected2 = {'X', ' ', 'O'};
     CHECK_EQ(expected2, column(board, 2));
 }
