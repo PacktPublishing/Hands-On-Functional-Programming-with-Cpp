@@ -17,6 +17,10 @@ auto transformAll = [](SourceType source,  auto lambda){
     return result;
 };
 
+auto accumulateAll = [](auto source, auto lambda){
+    return accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), lambda);
+};
+
 auto lineToString = [](const auto line){
     return transformAll<decltype(line), string>(line, [](auto token) -> char { return token;});
 };
@@ -25,64 +29,74 @@ auto boardToLinesString = [](const auto board){
     return transformAll<decltype(board), vector<string>>(board, [](Line line) { return lineToString(line); });
 };
 
-auto boardToString = [](auto const board){
+auto boardToString = [](const auto board){
     auto linesAsString = boardToLinesString(board);
-    return accumulate(linesAsString.begin(), linesAsString.end(), string(), 
+    return accumulateAll(linesAsString, 
             [](string current, string lineAsString) { return current + lineAsString + "\n"; }
     );
 };
 
-auto concatenate = [](auto first, auto const second){
-    first.insert(first.end(), make_move_iterator(second.begin()), make_move_iterator(second.end()));
-    return first;
+auto concatenate = [](auto first, const auto second){
+    auto result(first);
+    result.insert(result.end(), make_move_iterator(second.begin()), make_move_iterator(second.end()));
+    return result;
 };
 
-auto toRange = [](auto const board){
-    vector<int> range(board.size());
+auto concatenate3 = [](auto first, auto const second, auto const third){
+    return concatenate(concatenate(first, second), third);
+};
+
+auto toRange = [](auto const collection){
+    vector<int> range(collection.size());
     iota(begin(range), end(range), 0);
     return range;
 };
 
-auto identical = [](auto const value){return value;};
+auto identical = [](const auto value){return value;};
 
 auto all_lines = [](const auto board) {
     return transformAll<Board>(board, identical); 
 };
 
-auto column = [](const auto board, int index){
+auto column = [](const auto board, const int index){
     auto range = toRange(board);
     return transformAll<vector<int>, Line>(range, [&](auto i) { return board[i][index]; });
 };
 
 auto mainDiagonal = [](const auto board){
-    Line diagonal;
     auto range = toRange(board);
     return transformAll<decltype(range), Line>(range, [&](auto index){ return board[index][index];});
 };
 
 auto secondaryDiagonal = [](const auto board){
-    Line diagonal;
     auto range = toRange(board);
-    return transformAll<decltype(range), Line>(range, [&](auto index){ return board[index][board.size() - index - 1];});
+    return transformAll<decltype(range), Line>(range, [board](auto index){ return board[index][board.size() - index - 1];});
 };
 
 auto all_columns = [](const Board& board) {
-    Board result;
     auto range = toRange(board); 
     auto columnForBoardAndIndex = bind(column, board, _1);
     return transformAll<decltype(range), Board>(range, columnForBoardAndIndex);
 };
 
-auto all_diagonals = [] (auto const board){
+auto all_diagonals = [] (const auto board){
     return vector<Line>( {mainDiagonal(board), secondaryDiagonal(board)});
 };
 
-auto allLinesColumnsAndDiagonals = [](auto const board){
-    Board all;
-    all = concatenate(all, all_lines(board));
-    all = concatenate(all, all_columns(board));
-    all = concatenate(all, all_diagonals(board));
-    return all;
+template<typename SourceType, typename DestinationType>
+auto applyAllLambdasToValue = [](auto lambdas, auto value){
+    return transformAll<SourceType, DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
+};
+
+auto allLinesColumnsAndDiagonals = [](const auto board){
+    typedef vector<Line> Lines;
+    typedef function<Lines(Board)> BoardProjection;
+    typedef vector<BoardProjection> BoardProjections;
+
+    BoardProjections boardProjections = {all_lines, all_columns, all_diagonals};
+
+    auto boardProjectionsResult = applyAllLambdasToValue<BoardProjections, vector<Lines>>(boardProjections, board);
+    return accumulateAll(boardProjectionsResult, concatenate);
 };
 
 auto lineFilledWithX = [](auto const line){
