@@ -7,14 +7,18 @@
 using namespace std;
 using namespace std::placeholders;
 
+auto trueForAll = [](auto x) { return true; };
+auto falseForAll = [](auto x) { return false; };
+auto equalsChara = [](auto x){ return x == 'a';};
+auto notChard = [](auto x){ return x != 'd';};
 
 TEST_CASE("all_of"){
     vector<char> abc = {'a', 'b', 'c'};
 
-    CHECK_EQ(true, all_of(abc.begin(), abc.end(), [](auto x){ return true;}));
-    CHECK_EQ(false, all_of(abc.begin(), abc.end(), [](auto x){ return false;}));
-    CHECK_EQ(false, all_of(abc.begin(), abc.end(), [](auto x){ return x == 'a';}));
-    CHECK_EQ(true, all_of(abc.begin(), abc.end(), [](auto x){ return x != 'd';}));
+    CHECK(all_of(abc.begin(), abc.end(), trueForAll));
+    CHECK(!all_of(abc.begin(), abc.end(), falseForAll));
+    CHECK(!all_of(abc.begin(), abc.end(), equalsChara));
+    CHECK(all_of(abc.begin(), abc.end(), notChard));
 }
 
 auto all_of_collection = [](auto collection, auto lambda){
@@ -24,9 +28,9 @@ auto all_of_collection = [](auto collection, auto lambda){
 TEST_CASE("all_of_collection"){
     vector<char> abc = {'a', 'b', 'c'};
 
-    CHECK_EQ(true, all_of_collection(abc, [](auto x){ return true;}));
-    CHECK_EQ(false, all_of_collection(abc, [](auto x){ return false;}));
-    CHECK_EQ(false, all_of_collection(abc, [](auto x){ return x == 'a';}));
-    CHECK_EQ(true, all_of_collection(abc, [](auto x){ return x != 'd';}));
+    CHECK(all_of_collection(abc, trueForAll));
+    CHECK(!all_of_collection(abc, falseForAll));
+    CHECK(!all_of_collection(abc, equalsChara));
+    CHECK(all_of_collection(abc, notChard));
 }
 
