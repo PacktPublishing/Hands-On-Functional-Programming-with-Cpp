@@ -5,6 +5,18 @@
             "-c",
             "-std=c++17",
             "-o",
+            "out/typicalTransformations",
+            "typicalTransformations.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter6",
+        "file": "typicalTransformations.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
             "out/ticTacToeResult",
             "ticTacToeResult.cpp"
         ],
