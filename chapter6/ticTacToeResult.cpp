@@ -10,8 +10,8 @@ using namespace std::placeholders;
 typedef vector<char> Line;
 typedef vector<Line> Board;
 
-template<typename SourceType, typename DestinationType = SourceType>
-auto transformAll = [](SourceType source,  auto lambda){
+template<typename DestinationType = SourceType>
+auto transformAll = [](auto source,  auto lambda){
     DestinationType result;
     transform(source.begin(), source.end(), back_inserter(result), lambda);
     return result;
@@ -21,12 +21,16 @@ auto accumulateAll = [](auto source, auto lambda){
     return accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), lambda);
 };
 
+auto allOfCollection = [](auto collection, auto lambda){
+    return all_of(collection.begin(), collection.end(), lambda);
+};
+
 auto lineToString = [](const auto line){
-    return transformAll<decltype(line), string>(line, [](auto token) -> char { return token;});
+    return transformAll<string>(line, [](auto const token) -> char { return token;});
 };
 
 auto boardToLinesString = [](const auto board){
-    return transformAll<decltype(board), vector<string>>(board, [](Line line) { return lineToString(line); });
+    return transformAll<vector<string>>(board, [](Line line) { return lineToString(line); });
 };
 
 auto boardToString = [](const auto board){
@@ -60,23 +64,23 @@ auto all_lines = [](const auto board) {
 
 auto column = [](const auto board, const int index){
     auto range = toRange(board);
-    return transformAll<vector<int>, Line>(range, [&](auto i) { return board[i][index]; });
+    return transformAll<Line>(range, [&](auto i) { return board[i][index]; });
 };
 
 auto mainDiagonal = [](const auto board){
     auto range = toRange(board);
-    return transformAll<decltype(range), Line>(range, [&](auto index){ return board[index][index];});
+    return transformAll<Line>(range, [&](auto index){ return board[index][index];});
 };
 
 auto secondaryDiagonal = [](const auto board){
     auto range = toRange(board);
-    return transformAll<decltype(range), Line>(range, [board](auto index){ return board[index][board.size() - index - 1];});
+    return transformAll<Line>(range, [board](auto index){ return board[index][board.size() - index - 1];});
 };
 
 auto all_columns = [](const Board& board) {
     auto range = toRange(board); 
     auto columnForBoardAndIndex = bind(column, board, _1);
-    return transformAll<decltype(range), Board>(range, columnForBoardAndIndex);
+    return transformAll<Board>(range, columnForBoardAndIndex);
 };
 
 auto all_diagonals = [] (const auto board){
@@ -85,7 +89,7 @@ auto all_diagonals = [] (const auto board){
 
 template<typename SourceType, typename DestinationType>
 auto applyAllLambdasToValue = [](auto lambdas, auto value){
-    return transformAll<SourceType, DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
+    return transformAll<DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
 };
 
 auto allLinesColumnsAndDiagonals = [](const auto board){
@@ -99,9 +103,12 @@ auto allLinesColumnsAndDiagonals = [](const auto board){
     return accumulateAll(boardProjectionsResult, concatenate);
 };
 
-auto lineFilledWithX = [](auto const line){
-    return all_of(line.begin(), line.end(), [](auto token){ return token == 'X';});
+auto lineFilledWith = [](auto const line, auto const tokenToCheck){
+    return allOfCollection(line, [&tokenToCheck](auto const token){ return token == tokenToCheck;});
 };
+
+auto lineFilledWithX = bind(lineFilledWith, _1, 'X'); 
+auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
 auto xWins = [](auto const board){
     auto all = allLinesColumnsAndDiagonals(board);
@@ -209,6 +216,11 @@ TEST_CASE("Line filled with X"){
     Line line = {'X', 'X', 'X'};
 
     CHECK(lineFilledWithX(line));
+}
+
+TEST_CASE("Line not filled with X"){
+    CHECK(!lineFilledWithX(Line({'X', 'O', 'X'})));
+    CHECK(!lineFilledWithX(Line({'X', ' ', 'X'})));
 }
 
 TEST_CASE("X wins"){
