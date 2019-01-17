@@ -10,7 +10,7 @@ using namespace std::placeholders;
 typedef vector<char> Line;
 typedef vector<Line> Board;
 
-template<typename DestinationType = SourceType>
+template<typename DestinationType>
 auto transformAll = [](auto source,  auto lambda){
     DestinationType result;
     transform(source.begin(), source.end(), back_inserter(result), lambda);
