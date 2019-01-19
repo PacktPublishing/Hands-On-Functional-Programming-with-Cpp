@@ -41,7 +41,7 @@ auto lineToString = [](const auto line){
 };
 
 auto boardToLinesString = [](const auto board){
-    return transformAll<vector<string>>(board, [](Line line) { return lineToString(line); });
+    return transformAll<vector<string>>(board, lineToString);
 };
 
 auto boardToString = [](const auto board){
@@ -140,6 +140,61 @@ auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
 auto xWins = [](auto const board){
     return any_of_collection(allLinesColumnsAndDiagonals(board), lineFilledWithX);
+};
+
+auto oWins = [](auto const board){
+    return any_of_collection(allLinesColumnsAndDiagonals(board), lineFilledWithO);
+};
+
+auto noneOf = [](auto collection, auto lambda){
+    return none_of(collection.begin(), collection.end(), lambda);
+};
+
+auto isEmpty = [](auto token){return token == ' ';};
+auto fullLine = [](auto line){
+    return noneOf(line, isEmpty);
+};
+
+auto full = [](auto board){
+    return allOfCollection(board, fullLine);
+};
+
+auto draw = [](auto const board){
+    return full(board) && !xWins(board) && !oWins(board); 
+};
+
+auto inProgress = [](auto const board){
+    return !full(board) && !xWins(board) && !oWins(board); 
+};
+
+auto findInCollection = [](auto collection, auto lambda){
+    auto result = find_if(collection.begin(), collection.end(), lambda);
+    return (result == collection.end()) ? nullopt : optional(*result);
+};
+
+auto findInCollectionWithDefault = [](auto collection, auto defaultResult, auto lambda){
+    auto result = findInCollection(collection, lambda);
+    return result.has_value() ? (*result) : defaultResult;
+}; 
+
+auto howDidXWin = [](auto const board){
+    map<string, Line> linesWithDescription = {
+        {"first line", line(board, 0)},
+        {"second line", line(board, 1)},
+        {"last line", line(board, 2)},
+        {"first column", column(board, 0)},
+        {"second column", column(board, 1)},
+        {"last column", column(board, 2)},
+        {"main diagonal", mainDiagonal(board)},
+        {"secondary diagonal", secondaryDiagonal(board)},
+        {"diagonal", secondaryDiagonal(board)},
+    };
+    auto xDidNotWin = make_pair("X did not win", Line());
+    auto xWon = [](auto value){
+        return lineFilledWithX(value.second);
+    };
+
+    return findInCollectionWithDefault(linesWithDescription, xDidNotWin, xWon).first; 
 };
 
 TEST_CASE("lines"){
@@ -272,6 +327,57 @@ TEST_CASE("X wins"){
     };
 
     CHECK(xWins(board));
+}
+
+TEST_CASE("O wins"){
+    Board board = {
+        {'X', 'O', 'X'},
+        {' ', 'O', ' '},
+        {' ', 'O', 'X'}
+    };
+
+    CHECK(oWins(board));
+}
+
+TEST_CASE("draw"){
+    Board board = {
+        {'X', 'O', 'X'},
+        {'O', 'O', 'X'},
+        {'X', 'X', 'O'}
+    };
+
+    CHECK(draw(board));
+}
+
+TEST_CASE("in progress"){
+    Board board = {
+        {'X', 'O', 'X'},
+        {'O', ' ', 'X'},
+        {'X', 'X', 'O'}
+    };
+
+    CHECK(inProgress(board));
+}
+
+
+TEST_CASE("how did X win"){
+    Board board = {
+        {'X', 'X', 'X'},
+        {' ', 'O', ' '},
+        {' ', ' ', 'O'}
+    };
+
+    CHECK_EQ("first line", howDidXWin(board));
+}
+
+TEST_CASE("X did not win"){
+    Board board = {
+        {'X', 'X', ' '},
+        {' ', 'O', ' '},
+        {' ', ' ', 'O'}
+    };
+
+    CHECK_EQ("X did not win", howDidXWin(board));
 }
 
 TEST_CASE("Project column"){

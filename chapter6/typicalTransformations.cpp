@@ -1,6 +1,7 @@
 #include <iostream>
 #include <functional>
 #include <numeric>
+#include <optional>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
@@ -56,8 +57,6 @@ TEST_CASE("any_of_collection"){
     CHECK(any_of_collection(abc, notChard));
 }
 
-
-
 TEST_CASE("transform"){
     vector<char> abc = {'a', 'b', 'c'};
 
@@ -103,4 +102,63 @@ TEST_CASE("transform all"){
     vector<int> expected = {1, 2, 3};
     CHECK_EQ(expected, transform_all<vector<int>>(abc, toNumber));
 }
+
+TEST_CASE("accumulate"){
+    vector<int> values = {1, 12, 23, 45};
+
+    auto add = [](int first, int second){return first + second;};
+    int result = accumulate(values.begin(), values.end(), 0, add);
+    CHECK_EQ(1 + 12 + 23 + 45, result);
+
+    int resultWithInit100 = accumulate(values.begin(), values.end(), 100, add);
+    CHECK_EQ(1 + 12 + 23 + 45 + 100, resultWithInit100);
+    
+
+    vector<string> strings = {"Alex", "is", "here"};
+    auto concatenate = [](const string first, const string second) -> string{
+        return first + second;
+    };
+
+    string concatenated = accumulate(strings.begin(), strings.end(), string(), concatenate);
+    CHECK_EQ("Alexishere", concatenated);
+
+    string concatenatedWithPrefix = accumulate(strings.begin(), strings.end(), string("Pre_"), concatenate);
+    CHECK_EQ("Pre_Alexishere", concatenatedWithPrefix);
+}
+
+auto equals1 = [](auto value){ return value == 1; };
+auto greaterThan11 = [](auto value) { return value > 11; };
+auto greaterThan50 = [](auto value) { return value > 50; };
+
+TEST_CASE("find if"){
+    vector<int> values = {1, 12, 23, 45};
+
+    auto result1 = find_if(values.begin(), values.end(), equals1);
+    CHECK_EQ(*result1, 1);
+
+    auto result12 = find_if(values.begin(), values.end(), greaterThan11);
+    CHECK_EQ(*result12, 12);
+
+    auto resultNotFound = find_if(values.begin(), values.end(), greaterThan50);
+    CHECK_EQ(resultNotFound, values.end());
+}
+
+auto findInCollection = [](auto collection, auto lambda){
+    auto result = find_if(collection.begin(), collection.end(), lambda);
+    return (result == collection.end()) ? nullopt : optional(*result);
+};
+
+TEST_CASE("find in collection"){
+    vector<int> values = {1, 12, 23, 45};
+
+    auto result1 = findInCollection(values, equals1);
+    CHECK_EQ(result1, 1);
+
+    auto result12 = findInCollection(values, greaterThan11);
+    CHECK_EQ(result12, 12);
+
+    auto resultNotFound = findInCollection(values, greaterThan50);
+    CHECK(!resultNotFound.has_value());
+}
+
 
