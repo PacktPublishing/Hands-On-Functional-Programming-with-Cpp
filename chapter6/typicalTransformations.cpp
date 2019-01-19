@@ -34,6 +34,30 @@ TEST_CASE("all_of_collection"){
     CHECK(all_of_collection(abc, notChard));
 }
 
+TEST_CASE("any_of"){
+    vector<char> abc = {'a', 'b', 'c'};
+
+    CHECK(any_of(abc.begin(), abc.end(), trueForAll));
+    CHECK(!any_of(abc.begin(), abc.end(), falseForAll));
+    CHECK(any_of(abc.begin(), abc.end(), equalsChara));
+    CHECK(any_of(abc.begin(), abc.end(), notChard));
+}
+
+auto any_of_collection = [](auto collection, auto lambda){
+    return any_of(collection.begin(), collection.end(), lambda);
+};
+
+TEST_CASE("any_of_collection"){
+    vector<char> abc = {'a', 'b', 'c'};
+
+    CHECK(any_of_collection(abc, trueForAll));
+    CHECK(!any_of_collection(abc, falseForAll));
+    CHECK(any_of_collection(abc, equalsChara));
+    CHECK(any_of_collection(abc, notChard));
+}
+
+
+
 TEST_CASE("transform"){
     vector<char> abc = {'a', 'b', 'c'};
 

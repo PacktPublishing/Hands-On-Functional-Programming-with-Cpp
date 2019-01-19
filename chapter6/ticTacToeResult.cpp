@@ -32,6 +32,10 @@ auto allOfCollection = [](auto collection, auto lambda){
     return all_of(collection.begin(), collection.end(), lambda);
 };
 
+auto any_of_collection = [](auto collection, auto lambda){
+    return any_of(collection.begin(), collection.end(), lambda);
+};
+
 auto lineToString = [](const auto line){
     return transformAll<string>(line, [](auto const token) -> char { return token;});
 };
@@ -135,8 +139,7 @@ auto lineFilledWithX = bind(lineFilledWith, _1, 'X');
 auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
 auto xWins = [](auto const board){
-    auto all = allLinesColumnsAndDiagonals(board);
-    return any_of(all.begin(), all.end(), [](auto line){ return lineFilledWithX(line);});
+    return any_of_collection(allLinesColumnsAndDiagonals(board), lineFilledWithX);
 };
 
 TEST_CASE("lines"){
