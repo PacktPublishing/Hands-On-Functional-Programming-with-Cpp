@@ -4,12 +4,15 @@
             "c++",
             "-c",
             "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
             "-o",
-            "out/typicalTransformations",
-            "typicalTransformations.cpp"
+            "out/ticTacToeResult",
+            "ticTacToeResult.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter6",
-        "file": "typicalTransformations.cpp"
+        "file": "ticTacToeResult.cpp"
     },
     {
         "arguments": [
@@ -17,10 +20,10 @@
             "-c",
             "-std=c++17",
             "-o",
-            "out/ticTacToeResult",
-            "ticTacToeResult.cpp"
+            "out/typicalTransformations",
+            "typicalTransformations.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter6",
-        "file": "ticTacToeResult.cpp"
+        "file": "typicalTransformations.cpp"
     }
 ]

@@ -9,12 +9,19 @@ using namespace std::placeholders;
 
 typedef vector<char> Line;
 typedef vector<Line> Board;
+typedef vector<Line> Lines;
 
 template<typename DestinationType>
-auto transformAll = [](auto source,  auto lambda){
+auto transformAll = [](auto source, auto lambda){
     DestinationType result;
     transform(source.begin(), source.end(), back_inserter(result), lambda);
     return result;
+};
+
+auto toRange = [](auto const collection){
+    vector<int> range(collection.size());
+    iota(begin(range), end(range), 0);
+    return range;
 };
 
 auto accumulateAll = [](auto source, auto lambda){
@@ -37,7 +44,7 @@ auto boardToString = [](const auto board){
     auto linesAsString = boardToLinesString(board);
     return accumulateAll(linesAsString, 
             [](string current, string lineAsString) { return current + lineAsString + "\n"; }
-    );
+            );
 };
 
 auto concatenate = [](auto first, const auto second){
@@ -50,41 +57,65 @@ auto concatenate3 = [](auto first, auto const second, auto const third){
     return concatenate(concatenate(first, second), third);
 };
 
-auto toRange = [](auto const collection){
-    vector<int> range(collection.size());
-    iota(begin(range), end(range), 0);
-    return range;
+typedef pair<int, int> Coordinate;
+
+auto accessAtCoordinates = [](auto board, Coordinate coordinate){
+    return board[coordinate.first][coordinate.second];
 };
 
-auto identical = [](const auto value){return value;};
-
-auto all_lines = [](const auto board) {
-    return transformAll<Board>(board, identical); 
+auto projectCoordinates = [](auto board, auto coordinates){
+    auto boardElementFromCoordinates = bind(accessAtCoordinates, board, _1);
+    return transformAll<Line>(coordinates, boardElementFromCoordinates);
 };
 
-auto column = [](const auto board, const int index){
+auto mainDiagonalCoordinates = [](const auto board){
     auto range = toRange(board);
-    return transformAll<Line>(range, [&](auto i) { return board[i][index]; });
+    return transformAll<vector<Coordinate>>(range, [](auto index){return make_pair(index, index);});
+};
+
+auto secondaryDiagonalCoordinates = [](const auto board){
+    auto range = toRange(board);
+    return transformAll<vector<Coordinate>>(range, [board](auto index){return make_pair(index, board.size() - index - 1);});
+};
+
+auto columnCoordinates = [](const auto board, auto columnIndex){
+    auto range = toRange(board);
+    return transformAll<vector<Coordinate>>(range, [columnIndex](auto index){return make_pair(index, columnIndex);});
+};
+
+auto lineCoordinates = [](const auto board, auto lineIndex){
+    auto range = toRange(board);
+    return transformAll<vector<Coordinate>>(range, [lineIndex](auto index){return make_pair(lineIndex, index);});
 };
 
 auto mainDiagonal = [](const auto board){
-    auto range = toRange(board);
-    return transformAll<Line>(range, [&](auto index){ return board[index][index];});
+    return projectCoordinates(board, mainDiagonalCoordinates(board));
 };
 
 auto secondaryDiagonal = [](const auto board){
+    return projectCoordinates(board, secondaryDiagonalCoordinates(board));
+};
+
+auto column = [](auto board, auto columnIndex){
+    return projectCoordinates(board, columnCoordinates(board, columnIndex));
+};
+
+auto line = [](auto board, int lineIndex){
+    return projectCoordinates(board, lineCoordinates(board, lineIndex));
+};
+
+auto allLines = [](auto board) {
     auto range = toRange(board);
-    return transformAll<Line>(range, [board](auto index){ return board[index][board.size() - index - 1];});
+    return transformAll<Lines>(range, [board](auto index) { return line(board, index);});
 };
 
-auto all_columns = [](const Board& board) {
-    auto range = toRange(board); 
-    auto columnForBoardAndIndex = bind(column, board, _1);
-    return transformAll<Board>(range, columnForBoardAndIndex);
+auto allColumns = [](auto board) {
+    auto range = toRange(board);
+    return transformAll<Lines>(range, [board](auto index) { return column(board, index);});
 };
 
-auto all_diagonals = [] (const auto board){
-    return vector<Line>( {mainDiagonal(board), secondaryDiagonal(board)});
+auto allDiagonals = [](auto board) -> Lines {
+    return {mainDiagonal(board), secondaryDiagonal(board)};
 };
 
 template<typename SourceType, typename DestinationType>
@@ -92,15 +123,8 @@ auto applyAllLambdasToValue = [](auto lambdas, auto value){
     return transformAll<DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
 };
 
-auto allLinesColumnsAndDiagonals = [](const auto board){
-    typedef vector<Line> Lines;
-    typedef function<Lines(Board)> BoardProjection;
-    typedef vector<BoardProjection> BoardProjections;
-
-    BoardProjections boardProjections = {all_lines, all_columns, all_diagonals};
-
-    auto boardProjectionsResult = applyAllLambdasToValue<BoardProjections, vector<Lines>>(boardProjections, board);
-    return accumulateAll(boardProjectionsResult, concatenate);
+auto allLinesColumnsAndDiagonals = [](const auto board) {
+    return concatenate3(allLines(board), allColumns(board), allDiagonals(board));
 };
 
 auto lineFilledWith = [](auto const line, auto const tokenToCheck){
@@ -115,14 +139,19 @@ auto xWins = [](auto const board){
     return any_of(all.begin(), all.end(), [](auto line){ return lineFilledWithX(line);});
 };
 
-TEST_CASE("all lines"){
+TEST_CASE("lines"){
     Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    CHECK_EQ(board, all_lines(board));
+    Line expectedLine0 = {'X', 'X', 'X'};
+    CHECK_EQ(expectedLine0, line(board, 0));
+    Line expectedLine1 = {' ', 'O', ' '};
+    CHECK_EQ(expectedLine1, line(board, 1));
+    Line expectedLine2 = {' ', ' ', 'O'};
+    CHECK_EQ(expectedLine2, line(board, 2));
 }
 
 TEST_CASE("all columns"){
@@ -132,29 +161,38 @@ TEST_CASE("all columns"){
         {' ', ' ', 'O'}
     };
 
-    Board expectedColumns = {
-        {'X', ' ', ' '},
-        {'X', 'O', ' '},
-        {'X', ' ', 'O'},
-    };
-
-    CHECK_EQ(expectedColumns, all_columns(board));
+    Line expectedColumn0 = {'X', ' ', ' '};
+    CHECK_EQ(expectedColumn0, column(board, 0));
+    Line expectedColumn1 = {'X', 'O', ' '};
+    CHECK_EQ(expectedColumn1, column(board, 1));
+    Line expectedColumn2 = {'X', ' ', 'O'};
+    CHECK_EQ(expectedColumn2, column(board, 2));
 }
 
-TEST_CASE("all diagonals"){
+TEST_CASE("main diagonal"){
     Board board = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    Board expectedDiagonals = {
-        {'X', 'O', 'O'},
-        {'X', 'O', ' '}
+    Line expectedDiagonal = {'X', 'O', 'O'};
+
+    CHECK_EQ(expectedDiagonal, mainDiagonal(board));
+}
+
+TEST_CASE("secondary diagonal"){
+    Board board = {
+        {'X', 'X', 'X'},
+        {' ', 'O', ' '},
+        {' ', ' ', 'O'}
     };
 
-    CHECK_EQ(expectedDiagonals, all_diagonals(board));
+    Line expectedDiagonal = {'X', 'O', ' '};
+
+    CHECK_EQ(expectedDiagonal, secondaryDiagonal(board));
 }
+
 
 TEST_CASE("all lines, columns and diagonals"){
     Board board = {
@@ -163,7 +201,7 @@ TEST_CASE("all lines, columns and diagonals"){
         {' ', ' ', 'O'}
     };
 
-    Board expected = {
+    Lines expected = {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'},
@@ -246,4 +284,16 @@ TEST_CASE("Project column"){
     CHECK_EQ(expected1, column(board, 1));
     Line expected2 = {'X', ' ', 'O'};
     CHECK_EQ(expected2, column(board, 2));
+}
+
+TEST_CASE("Range"){
+    Board board = {
+        {'X', 'X', 'X'},
+        {' ', 'O', ' '},
+        {' ', ' ', 'O'}
+    };
+
+    vector<int> expected = {0, 1, 2};
+    CHECK_EQ(expected, toRange(board));
+    CHECK_EQ(expected, toRange(board[0]));
 }
