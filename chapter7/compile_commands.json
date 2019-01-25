@@ -1,0 +1,17 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/ticTacToeResult",
+            "ticTacToeResult.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter7",
+        "file": "ticTacToeResult.cpp"
+    }
+]
