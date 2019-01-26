@@ -138,13 +138,15 @@ auto lineFilledWith = [](auto const line, auto const tokenToCheck){
 auto lineFilledWithX = bind(lineFilledWith, _1, 'X'); 
 auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
-auto tokenWins = [](auto const board, auto const token){
-    return any_of_collection(
-            allLinesColumnsAndDiagonals(board), 
-            bind(lineFilledWith, _1, token)
-            );
-};
+template <typename CollectionBooleanOperation, typename CollectionProvider, typename Predicate>
+auto compose(CollectionBooleanOperation collectionBooleanOperation, CollectionProvider collectionProvider, Predicate predicate){
+  return [=](auto collectionProviderSeed, auto predicateFirstParameter){
+      return collectionBooleanOperation(collectionProvider(collectionProviderSeed), 
+              bind(predicate, _1, predicateFirstParameter));
+  };
+}
 
+auto tokenWins = compose(any_of_collection, allLinesColumnsAndDiagonals, lineFilledWith);
 auto xWins = bind(tokenWins, _1, 'X');
 auto oWins = bind(tokenWins, _1, 'O');
 
@@ -153,9 +155,10 @@ auto noneOf = [](auto collection, auto lambda){
 };
 
 auto isEmpty = [](auto token){return token == ' ';};
-auto fullLine = [](auto line){
-    return noneOf(line, isEmpty);
-};
+
+auto isNotEmpty= [](auto token){return token != ' ';};
+
+auto fullLine = bind(allOfCollection, _1, isNotEmpty);
 
 auto full = [](auto board){
     return allOfCollection(board, fullLine);
