@@ -139,14 +139,15 @@ auto lineFilledWithX = bind(lineFilledWith, _1, 'X');
 auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
 template <typename CollectionBooleanOperation, typename CollectionProvider, typename Predicate>
-auto compose(CollectionBooleanOperation collectionBooleanOperation, CollectionProvider collectionProvider, Predicate predicate){
+
+auto booleanOperationOnProvidedCollection(CollectionBooleanOperation collectionBooleanOperation, CollectionProvider collectionProvider, Predicate predicate){
   return [=](auto collectionProviderSeed, auto predicateFirstParameter){
       return collectionBooleanOperation(collectionProvider(collectionProviderSeed), 
               bind(predicate, _1, predicateFirstParameter));
   };
 }
 
-auto tokenWins = compose(any_of_collection, allLinesColumnsAndDiagonals, lineFilledWith);
+auto tokenWins = booleanOperationOnProvidedCollection(any_of_collection, allLinesColumnsAndDiagonals, lineFilledWith);
 auto xWins = bind(tokenWins, _1, 'X');
 auto oWins = bind(tokenWins, _1, 'O');
 
