@@ -7,6 +7,13 @@
 using namespace std;
 using namespace std::placeholders;
 
+template<typename F, typename G>
+auto compose(F f, G g){
+    return [&](auto value){
+        return f(g(value));
+    };
+}
+
 auto half = [](auto value) { return value / 2; };
 
 struct ValueAndLog{
@@ -18,11 +25,10 @@ struct ValueAndLog{
     };
 };
 
-
 auto halfWithLogging = [](const ValueAndLog& valueAndLog){ 
     ValueAndLog resultValueAndLog;
     resultValueAndLog.value = half(valueAndLog.value);
-    resultValueAndLog.log = valueAndLog.log + "Half: " + to_string(resultValueAndLog.value);
+    resultValueAndLog.log = valueAndLog.log + "Halved: " + to_string(valueAndLog.value);
     return resultValueAndLog;
 };
 
@@ -31,21 +37,43 @@ auto doubleValue = [](auto value){ return value * 2;};
 auto doubleWithLogging = [](const ValueAndLog& valueAndLog){
     ValueAndLog resultValueAndLog;
     resultValueAndLog.value = doubleValue(valueAndLog.value);
-    resultValueAndLog.log = valueAndLog.log + "Double: " + to_string(resultValueAndLog.value);
+    resultValueAndLog.log = valueAndLog.log + "Doubled: " + to_string(valueAndLog.value);
     return resultValueAndLog;
 };
 
 auto logDouble = [](auto previous, auto value){
-    return previous + "Double: " + to_string(value);
+    return previous + "Doubled: " + to_string(value);
 };
 
-auto something = [](auto valueAndLog, auto computeLambda, auto logLambda){
+// Type initializer
+// Monad composition operator = bind
+
+auto returnValue = [](auto value){
+    return [value](auto log){
+        return ValueAndLog{value, log};
+    };
+};
+
+//auto composeMonads = [](){};
+
+/*
+auto computeAndWrite = [](ValueAndLog valueAndLog, auto computeLambda){
     auto newValue = computeLambda(valueAndLog.value);
-    auto newLog = logLambda(valueAndLog.log, newValue);
-    return ValueAndLog{newValue, newLog};
+    auto newLog = tell(valueAndLog, "Doubled: " + to_string(valueAndLog.value));
+    returnValue(newValue);
+};
+*/
+
+auto writerMonad = [](auto computeLambda){
+    static string log;
+    return [computeLambda](auto value){
+        auto newValue = computeLambda(value);
+        log += "Doubled: " + to_string(value);
+        return newValue;
+    };
 };
 
-auto doubleWithLoggingAndMonad = bind(something, _1, doubleValue, logDouble);
+auto doubleWithLoggingAndMonad = writerMonad(doubleValue);
 
 TEST_CASE("half"){
     CHECK_EQ(4, half(8));
@@ -54,7 +82,7 @@ TEST_CASE("half"){
 
 TEST_CASE("half with log"){
     ValueAndLog input{8, ""};
-    ValueAndLog expected{4, "Half: 4"};
+    ValueAndLog expected{4, "Halved: 8"};
 
     auto actual = halfWithLogging(input);
 
@@ -63,7 +91,7 @@ TEST_CASE("half with log"){
 
 TEST_CASE("repeated half with log"){
     ValueAndLog input{8, ""};
-    ValueAndLog expected{2, "Half: 4Half: 2"};
+    ValueAndLog expected{2, "Halved: 8Halved: 4"};
 
     auto actual = halfWithLogging(halfWithLogging(input));
 
@@ -78,7 +106,7 @@ TEST_CASE("double"){
 
 TEST_CASE("double with log"){
     ValueAndLog input{2, ""};
-    ValueAndLog expected{4, "Double: 4"};
+    ValueAndLog expected{4, "Doubled: 2"};
 
     auto actual = doubleWithLogging(input);
 
@@ -87,7 +115,7 @@ TEST_CASE("double with log"){
 
 TEST_CASE("repeated double with log"){
     ValueAndLog input{2, ""};
-    ValueAndLog expected{8, "Double: 4Double: 8"};
+    ValueAndLog expected{8, "Doubled: 2Doubled: 4"};
 
     auto actual = doubleWithLogging(doubleWithLogging(input));
 
@@ -96,20 +124,22 @@ TEST_CASE("repeated double with log"){
 }
 
 TEST_CASE("double with log and monad"){
-    ValueAndLog input{2, ""};
-    ValueAndLog expected{4, "Double: 4"};
+    //ValueAndLog input{2, ""};
+    ValueAndLog expected{4, "Doubled: 2"};
 
-    auto actual = doubleWithLoggingAndMonad(input);
+//    auto actual = doubleWithLoggingAndMonad(input);
+    auto actual = writerMonad(doubleValue)(2);
 
     CHECK_EQ(expected, actual);
 }
 
 TEST_CASE("repeated double with logging and monad"){
-    ValueAndLog input{2, ""};
-    ValueAndLog expected{8, "Double: 4Double: 8"};
+    //ValueAndLog input{2, ""};
+    ValueAndLog expected{8, "Doubled: 2Doubled: 4"};
 
-    auto actual = doubleWithLoggingAndMonad(doubleWithLoggingAndMonad(input));
+    //auto actual = doubleWithLoggingAndMonad(doubleWithLoggingAndMonad(input));
+    auto doubleWithLogging = writerMonad(doubleValue);
+    auto actual = doubleWithLogging(doubleWithLogging(2));
 
-    CHECK_EQ(expected.value, actual.value);
-    CHECK_EQ(expected.log, actual.log);
+    CHECK_EQ(expected, actual);
 }

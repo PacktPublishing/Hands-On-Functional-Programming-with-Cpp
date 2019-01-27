@@ -13,5 +13,20 @@
         ],
         "directory": "/home/alexb/work/bookCode/chapter7",
         "file": "ticTacToeResult.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/monads",
+            "monads.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter7",
+        "file": "monads.cpp"
     }
 ]
