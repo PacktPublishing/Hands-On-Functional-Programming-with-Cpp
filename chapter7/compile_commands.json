@@ -23,10 +23,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/monads",
-            "monads.cpp"
+            "out/hiddenLoop",
+            "hiddenLoop.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter7",
-        "file": "monads.cpp"
+        "file": "hiddenLoop.cpp"
     }
 ]
