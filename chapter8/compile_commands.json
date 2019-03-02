@@ -1,0 +1,32 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/ticTacToeResultWithClasses",
+            "ticTacToeResultWithClasses.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter8",
+        "file": "ticTacToeResultWithClasses.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/ticTacToeResult",
+            "ticTacToeResult.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter8",
+        "file": "ticTacToeResult.cpp"
+    }
+]
