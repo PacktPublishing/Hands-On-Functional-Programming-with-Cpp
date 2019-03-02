@@ -120,14 +120,6 @@ auto any_of_collection = [](auto collection, auto lambda){
     return any_of(collection.begin(), collection.end(), lambda);
 };
 
-auto mainDiagonal = [](const auto board){
-    return projectCoordinates(board, mainDiagonalCoordinates(board));
-};
-
-auto secondaryDiagonal = [](const auto board){
-    return projectCoordinates(board, secondaryDiagonalCoordinates(board));
-};
-
 template<typename SourceType, typename DestinationType>
 auto applyAllLambdasToValue = [](auto lambdas, auto value){
     return transformAll<DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
@@ -136,9 +128,6 @@ auto applyAllLambdasToValue = [](auto lambdas, auto value){
 auto lineFilledWith = [](auto const line, auto const tokenToCheck){
     return allOfCollection(line, [&tokenToCheck](auto const token){ return token == tokenToCheck;});
 };
-
-auto lineFilledWithX = bind(lineFilledWith, _1, 'X'); 
-auto lineFilledWithO = bind(lineFilledWith, _1, 'O');
 
 template <typename CollectionBooleanOperation, typename CollectionProvider, typename Predicate>
 
@@ -262,16 +251,6 @@ TEST_CASE("all lines, columns and diagonals"){
     CHECK_EQ(expected, all);
 }
 
-TEST_CASE("Line filled with X"){
-    Line line = {'X', 'X', 'X'};
-
-    CHECK(lineFilledWithX(line));
-}
-
-TEST_CASE("Line not filled with X"){
-    CHECK(!lineFilledWithX(Line({'X', 'O', 'X'})));
-    CHECK(!lineFilledWithX(Line({'X', ' ', 'X'})));
-}
 /*
 TEST_CASE("X wins"){
     Board board = {

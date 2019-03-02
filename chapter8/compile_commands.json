@@ -8,11 +8,11 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/ticTacToeResultWithClasses",
-            "ticTacToeResultWithClasses.cpp"
+            "out/ticTacToeResult",
+            "ticTacToeResult.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter8",
-        "file": "ticTacToeResultWithClasses.cpp"
+        "file": "ticTacToeResult.cpp"
     },
     {
         "arguments": [
@@ -23,10 +23,25 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/ticTacToeResult",
-            "ticTacToeResult.cpp"
+            "out/fromClassToFunctions",
+            "fromClassToFunctions.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter8",
-        "file": "ticTacToeResult.cpp"
+        "file": "fromClassToFunctions.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/ticTacToeResultWithClasses",
+            "ticTacToeResultWithClasses.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter8",
+        "file": "ticTacToeResultWithClasses.cpp"
     }
 ]
