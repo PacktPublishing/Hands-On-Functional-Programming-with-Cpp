@@ -31,17 +31,8 @@ auto allOfCollection = [](auto collection, auto lambda){
 typedef string Card;
 typedef vector<Card> Hand;
 
-auto endsWith = [](const std::string& str, const std::string& suffix)
-{
+auto endsWith = [](const std::string& str, const std::string& suffix){
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
-};
-
-auto comparePokerHands = [](Hand /*aliceHand*/, Hand bobHand){
-    Hand winningBobHand {"2♣", "3♣", "4♣", "5♣", "6♣"};
-    if(bobHand == winningBobHand){
-        return "Bob wins with straight flush";
-    }
-    return "Alice wins with straight flush";
 };
 
 auto suitOf = [](Card card){
@@ -110,6 +101,19 @@ auto isStraightFlush = [](Hand hand){
         areValuesConsecutive(allValuesInOrder(hand));
 };
 
+auto comparePokerHands = [](Hand aliceHand, Hand bobHand){
+    if(isStraightFlush(bobHand) && isStraightFlush(aliceHand)){
+        return "Alice wins with straight flush";
+    }
+
+    if(isStraightFlush(bobHand)) {
+        return "Bob wins with straight flush";
+    }
+
+    return "Alice wins with straight flush";
+};
+
+
 /*
 Case: Alice wins
 
@@ -165,11 +169,45 @@ TEST_CASE("Bob wins with straight flush"){
         bobHand = {"2♣", "3♣", "4♣", "5♣", "6♣"};
     };
 
+    SUBCASE("3 based straight flush"){
+        bobHand = {"3♣", "4♣", "5♣", "6♣", "7♣"};
+    };
+
+    SUBCASE("10 based straight flush"){
+        bobHand = {"T♣", "J♣", "Q♣", "K♣", "A♣"};
+    };
+
     CAPTURE(bobHand);
 
     auto result = comparePokerHands(aliceHand, bobHand);
 
     CHECK_EQ("Bob wins with straight flush", result);
+}
+
+/*
+Case: Alice wins with higher straight flush
+
+Inputs:
+    Alice: 3♠, 4♠, 5♠, 6♠, 7♠
+    Bob: 2♣, 3♣, 4♣, 5♣, 6♣
+
+Output:
+    Alice wins with straight flush
+*/
+
+TEST_CASE("Alice and Bob have straight flushes but Alice wins with higher straight flush"){
+    Hand aliceHand;
+    Hand bobHand{"2♣", "3♣", "4♣", "5♣", "6♣"};
+
+    SUBCASE("3 based straight flush"){
+        aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+    };
+
+    CAPTURE(aliceHand);
+
+    auto result = comparePokerHands(aliceHand, bobHand);
+
+    CHECK_EQ("Alice wins with straight flush", result);
 }
 
 TEST_CASE("Hand is straight flush"){
