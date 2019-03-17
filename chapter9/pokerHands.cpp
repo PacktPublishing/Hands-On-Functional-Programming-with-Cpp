@@ -7,12 +7,18 @@
 using namespace std;
 using namespace std::placeholders;
 
-auto comparePokerHands = [](vector<string> /*aliceHand*/, vector<string> bobHand){
-    vector<string> winningBobHand {"2♣", "3♣", "4♣", "5♣", "6♣"};
+typedef vector<string> Hand;
+
+auto comparePokerHands = [](Hand /*aliceHand*/, Hand bobHand){
+    Hand winningBobHand {"2♣", "3♣", "4♣", "5♣", "6♣"};
     if(bobHand == winningBobHand){
         return "Bob wins with straight flush";
     }
     return "Alice wins with straight flush";
+};
+
+auto isStraightFlush = [](Hand){
+    return true;
 };
 
 /*
@@ -27,8 +33,8 @@ Output:
 */
 
 TEST_CASE("Alice wins with straight flush"){
-    vector<string> aliceHand;
-    vector<string> bobHand{"2♣", "4♦", "7♥", "9♠", "A♥"};
+    Hand aliceHand;
+    Hand bobHand{"2♣", "4♦", "7♥", "9♠", "A♥"};
 
     SUBCASE("2 based straight flush"){
         aliceHand = {"2♠", "3♠", "4♠", "5♠", "6♠"};
@@ -63,8 +69,8 @@ Output:
 */
 
 TEST_CASE("Bob wins with straight flush"){
-    vector<string> aliceHand{"2♠", "3♠", "4♠", "5♠", "9♠"};
-    vector<string> bobHand;
+    Hand aliceHand{"2♠", "3♠", "4♠", "5♠", "9♠"};
+    Hand bobHand;
 
     SUBCASE("2 based straight flush"){
         bobHand = {"2♣", "3♣", "4♣", "5♣", "6♣"};
@@ -75,6 +81,18 @@ TEST_CASE("Bob wins with straight flush"){
     auto result = comparePokerHands(aliceHand, bobHand);
 
     CHECK_EQ("Bob wins with straight flush", result);
+}
+
+TEST_CASE("Hand is straight flush"){
+    Hand hand;
+
+    SUBCASE("2 based straight flush"){
+        hand = {"2♣", "3♣", "4♣", "5♣", "6♣"};
+    };
+
+    CAPTURE(hand);
+
+    CHECK(isStraightFlush(hand));
 }
 
 
