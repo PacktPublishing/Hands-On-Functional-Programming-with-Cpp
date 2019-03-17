@@ -90,6 +90,11 @@ TEST_CASE("Hand is straight flush"){
         hand = {"2♣", "3♣", "4♣", "5♣", "6♣"};
     };
 
+    SUBCASE("3 based straight flush"){
+        hand = {"3♣", "4♣", "5♣", "6♣", "7♣"};
+    };
+
+
     CAPTURE(hand);
 
     CHECK(isStraightFlush(hand));
