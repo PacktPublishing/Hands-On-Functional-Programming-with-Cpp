@@ -101,9 +101,20 @@ auto isStraightFlush = [](Hand hand){
         areValuesConsecutive(allValuesInOrder(hand));
 };
 
+auto compareStraightFlushes = [](Hand first, Hand second){
+    int firstHandValue = allValuesInOrder(first).front();
+    int secondHandValue = allValuesInOrder(second).front();
+    if(firstHandValue > secondHandValue) return 1;
+    if(secondHandValue > firstHandValue) return -1;
+    return 0;
+};
+
 auto comparePokerHands = [](Hand aliceHand, Hand bobHand){
     if(isStraightFlush(bobHand) && isStraightFlush(aliceHand)){
-        return "Alice wins with straight flush";
+        int whichIsHigher = compareStraightFlushes(aliceHand, bobHand);
+        if(whichIsHigher == 1) return "Alice wins with straight flush";
+        if(whichIsHigher == -1) return "Bob wins with straight flush";
+        return "Draw";
     }
 
     if(isStraightFlush(bobHand)) {
@@ -209,6 +220,61 @@ TEST_CASE("Alice and Bob have straight flushes but Alice wins with higher straig
 
     CHECK_EQ("Alice wins with straight flush", result);
 }
+
+/*
+Case: Bob wins with higher straight flush
+
+Inputs:
+ Alice: 3♠, 4♠, 5♠, 6♠, 7♠
+ Bob: 4♣, 5♣, 6♣, 7♣, 8♣
+
+Output:
+ Bob wins with straight flush
+*/
+
+TEST_CASE("Alice and Bob have straight flushes but Bob wins with higher straight flush"){
+    Hand aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+    Hand bobHand;
+
+    SUBCASE("3 based straight flush"){
+        bobHand = {"4♣", "5♣", "6♣", "7♣", "8♣"};
+    };
+
+    CAPTURE(bobHand);
+
+    auto result = comparePokerHands(aliceHand, bobHand);
+
+    CHECK_EQ("Bob wins with straight flush", result);
+}
+
+/*
+Case: Draw because equal straight flushes
+
+Inputs:
+ Alice: 3♠, 4♠, 5♠, 6♠, 7♠
+ Bob: 3♠, 4♠, 5♠, 6♠, 7♠
+
+Output:
+ Draw
+*/
+
+TEST_CASE("Draw due to equal straight flushes"){
+    Hand aliceHand;
+    Hand bobHand;
+
+    SUBCASE("3 based straight flush"){
+        aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+    };
+
+    CAPTURE(aliceHand);
+    bobHand = aliceHand;
+
+    auto result = comparePokerHands(aliceHand, bobHand);
+
+    CHECK_EQ("Draw", result);
+}
+
+
 
 TEST_CASE("Hand is straight flush"){
     Hand hand;
