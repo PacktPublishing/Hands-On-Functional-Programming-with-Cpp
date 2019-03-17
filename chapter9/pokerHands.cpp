@@ -46,3 +46,32 @@ TEST_CASE("Alice wins with straight flush"){
 
     CHECK_EQ("Alice wins with straight flush", result);
 }
+
+
+/*
+Case: Bob wins
+
+Inputs:
+    Alice: 2♠, 3♠, 4♠, 5♠, 9♠
+    Bob: 2♣, 3♣, 4♣, 5♣, 6♣
+
+Output:
+    Bob wins with straight flush
+*/
+
+TEST_CASE("Bob wins with straight flush"){
+    auto aliceHand = {"2♠", "3♠", "4♠", "5♠", "9♠"};
+    vector<string> bobHand;
+
+    SUBCASE("2 based straight flush"){
+        bobHand = {"2♣", "3♣", "4♣", "5♣", "6♣"};
+    };
+
+    CAPTURE(bobHand);
+
+    auto result = comparePokerHands(aliceHand, bobHand);
+
+    CHECK_EQ("Bob wins with straight flush", result);
+}
+
+
