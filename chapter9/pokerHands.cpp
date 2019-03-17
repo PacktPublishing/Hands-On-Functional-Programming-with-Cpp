@@ -24,8 +24,23 @@ Output:
 */
 
 TEST_CASE("Alice wins with straight flush"){
-    auto aliceHand = {"2♠", "3♠", "4♠", "5♠", "6♠"};
+    vector<string> aliceHand;
     auto bobHand = {"2♣", "4♦", "7♥", "9♠", "A♥"};
+
+    SUBCASE("2 based straight flush"){
+        aliceHand = {"2♠", "3♠", "4♠", "5♠", "6♠"};
+    };
+    SUBCASE("3 based straight flush"){
+        aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+    };
+    SUBCASE("4 based straight flush"){
+        aliceHand = {"4♠", "5♠", "6♠", "7♠", "8♠"};
+    };
+    SUBCASE("10 based straight flush"){
+        aliceHand = {"T♠", "J♠", "Q♠", "K♠", "A♠"};
+    };
+
+    CAPTURE(aliceHand);
 
     auto result = comparePokerHands(aliceHand, bobHand);
 
