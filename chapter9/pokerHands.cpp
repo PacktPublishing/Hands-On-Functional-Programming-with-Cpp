@@ -7,7 +7,20 @@
 using namespace std;
 using namespace std::placeholders;
 
+/*
+
+   D = ♦
+   C = ♣
+   H = ♥
+   S = ♠
+*/
+
 typedef vector<string> Hand;
+
+auto endsWith = [](const std::string& str, const std::string& suffix)
+{
+    return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
+};
 
 auto comparePokerHands = [](Hand /*aliceHand*/, Hand bobHand){
     Hand winningBobHand {"2♣", "3♣", "4♣", "5♣", "6♣"};
@@ -17,7 +30,10 @@ auto comparePokerHands = [](Hand /*aliceHand*/, Hand bobHand){
     return "Alice wins with straight flush";
 };
 
-auto isStraightFlush = [](Hand){
+auto isStraightFlush = [](Hand hand){
+    if(endsWith(hand.back(), "♠")){
+        return false;
+    };
     return true;
 };
 
@@ -100,4 +116,14 @@ TEST_CASE("Hand is straight flush"){
     CHECK(isStraightFlush(hand));
 }
 
+TEST_CASE("Hand is not straight flush"){
+    Hand hand;
 
+    SUBCASE("Would be straight flush except for one card from another suit"){
+        hand = {"2♣", "3♣", "4♣", "5♣", "6♠"};
+    };
+
+    CAPTURE(hand);
+
+    CHECK(!isStraightFlush(hand));
+}
