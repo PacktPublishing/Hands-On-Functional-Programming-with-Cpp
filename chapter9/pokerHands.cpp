@@ -7,8 +7,11 @@
 using namespace std;
 using namespace std::placeholders;
 
-
-auto comparePokerHands = [](auto /*aliceHand*/, auto /*bobHand*/){
+auto comparePokerHands = [](vector<string> /*aliceHand*/, vector<string> bobHand){
+    vector<string> winningBobHand {"2♣", "3♣", "4♣", "5♣", "6♣"};
+    if(bobHand == winningBobHand){
+        return "Bob wins with straight flush";
+    }
     return "Alice wins with straight flush";
 };
 
@@ -25,7 +28,7 @@ Output:
 
 TEST_CASE("Alice wins with straight flush"){
     vector<string> aliceHand;
-    auto bobHand = {"2♣", "4♦", "7♥", "9♠", "A♥"};
+    vector<string> bobHand{"2♣", "4♦", "7♥", "9♠", "A♥"};
 
     SUBCASE("2 based straight flush"){
         aliceHand = {"2♠", "3♠", "4♠", "5♠", "6♠"};
@@ -60,7 +63,7 @@ Output:
 */
 
 TEST_CASE("Bob wins with straight flush"){
-    auto aliceHand = {"2♠", "3♠", "4♠", "5♠", "9♠"};
+    vector<string> aliceHand{"2♠", "3♠", "4♠", "5♠", "9♠"};
     vector<string> bobHand;
 
     SUBCASE("2 based straight flush"){
