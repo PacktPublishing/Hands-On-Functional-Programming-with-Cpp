@@ -7,6 +7,11 @@
 using namespace std;
 using namespace std::placeholders;
 
+
+auto comparePokerHands = [](auto /*aliceHand*/, auto /*bobHand*/){
+    return "Alice wins with straight flush";
+};
+
 /*
 Case: Alice wins
 
