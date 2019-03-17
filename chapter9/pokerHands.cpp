@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <functional>
 #include <numeric>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -6,6 +7,18 @@
 
 using namespace std;
 using namespace std::placeholders;
+
+template<typename DestinationType>
+auto transformAll = [](auto source, auto lambda){
+    DestinationType result;
+    transform(source.begin(), source.end(), back_inserter(result), lambda);
+    return result;
+};
+
+auto allOfCollection = [](auto collection, auto lambda){
+    return all_of(collection.begin(), collection.end(), lambda);
+};
+
 
 /*
 
@@ -35,12 +48,66 @@ auto suitOf = [](Card card){
     return card.substr(1);
 };
 
+const std::map<char, int> charsToCardValues = {
+    {'1', 1},
+    {'2', 2},
+    {'3', 3},
+    {'4', 4},
+    {'5', 5},
+    {'6', 6},
+    {'7', 7},
+    {'8', 8},
+    {'9', 9},
+    {'T', 10},
+    {'J', 11},
+    {'Q', 12},
+    {'K', 13},
+    {'A', 14},
+};
+
+auto valueOf = [](Card card){
+    return charsToCardValues.at(card.front());
+};
+
+auto toRange = [](auto const collection, int startValue){
+    vector<int> range(collection.size());
+    iota(begin(range), end(range), startValue);
+    return range;
+};
+
+auto areValuesConsecutive = [](const vector<int> allValuesInOrder){
+    vector<int> consecutiveValues = toRange(allValuesInOrder, allValuesInOrder.front());
+
+    return consecutiveValues == allValuesInOrder;
+};
+
+auto isSuitEqual = [](auto value, auto suitToCompareTo){
+    return value == suitToCompareTo;
+};
+
+auto isSameSuit = [](vector<string> allSuits){
+    auto sameSuit = bind(isSuitEqual, _1, allSuits.front()); 
+    return allOfCollection(allSuits, sameSuit);
+};
+
+auto has5Cards = [](Hand hand){
+    return hand.size() == 5;
+};
+
+auto allValuesInOrder = [](Hand hand){
+    auto theValues = transformAll<vector<int>>(hand, valueOf);
+    sort(theValues.begin(), theValues.end());
+    return theValues;
+};
+
+auto allSuits = [](Hand hand){
+    return transformAll<vector<string>>(hand, suitOf);
+};
+
 auto isStraightFlush = [](Hand hand){
-    auto lastCard = hand.back();
-    if(suitOf(lastCard) == "♠"){
-        return false;
-    };
-    return true;
+    return has5Cards(hand) && 
+        isSameSuit(allSuits(hand)) && 
+        areValuesConsecutive(allValuesInOrder(hand));
 };
 
 /*
@@ -116,6 +183,18 @@ TEST_CASE("Hand is straight flush"){
         hand = {"3♣", "4♣", "5♣", "6♣", "7♣"};
     };
 
+    SUBCASE("4 based straight flush"){
+        hand = {"4♣", "5♣", "6♣", "7♣", "8♣"};
+    };
+
+    SUBCASE("4 based straight flush on hearts"){
+        hand = {"4♥", "5♥", "6♥", "7♥", "8♥"};
+    };
+
+    SUBCASE("4 based straight flush on hearts"){
+        hand = {"T♥", "J♥", "Q♥", "K♥", "A♥"};
+    };
+
 
     CAPTURE(hand);
 
@@ -127,6 +206,18 @@ TEST_CASE("Hand is not straight flush"){
 
     SUBCASE("Would be straight flush except for one card from another suit"){
         hand = {"2♣", "3♣", "4♣", "5♣", "6♠"};
+    };
+
+    SUBCASE("Would be straight flush except not enough cards"){
+        hand = {"2♣", "3♣", "4♣", "5♣"};
+    };
+
+    SUBCASE("Would be straight flush except too many cards"){
+        hand = {"2♣", "3♣", "4♣", "5♣", "6♠", "7♠"};
+    };
+
+    SUBCASE("Empty hand"){
+        hand = {};
     };
 
     CAPTURE(hand);
