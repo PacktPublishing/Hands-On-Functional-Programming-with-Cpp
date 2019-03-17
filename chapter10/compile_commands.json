@@ -1,0 +1,32 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/testPureFunctions",
+            "testPureFunctions.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter9",
+        "file": "testPureFunctions.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/pokerHands",
+            "pokerHands.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter9",
+        "file": "pokerHands.cpp"
+    }
+]
