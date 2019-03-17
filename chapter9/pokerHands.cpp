@@ -15,7 +15,8 @@ using namespace std::placeholders;
    S = ♠
 */
 
-typedef vector<string> Hand;
+typedef string Card;
+typedef vector<Card> Hand;
 
 auto endsWith = [](const std::string& str, const std::string& suffix)
 {
@@ -30,8 +31,13 @@ auto comparePokerHands = [](Hand /*aliceHand*/, Hand bobHand){
     return "Alice wins with straight flush";
 };
 
+auto suitOf = [](Card card){
+    return card.substr(1);
+};
+
 auto isStraightFlush = [](Hand hand){
-    if(endsWith(hand.back(), "♠")){
+    auto lastCard = hand.back();
+    if(suitOf(lastCard) == "♠"){
         return false;
     };
     return true;
