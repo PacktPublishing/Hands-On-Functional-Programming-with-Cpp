@@ -1,8 +1,8 @@
-all: pokerHands
+all: strategy
 
 .outputFolder:
 	mkdir -p out
 
-pokerHands: .outputFolder
-	g++ -std=c++17 pokerHands.cpp -Wall -Wextra -Werror -o out/pokerHands
-	./out/pokerHands
+strategy : .outputFolder
+	g++ -std=c++17 strategy.cpp -Wall -Wextra -Werror -o out/strategy
+	./out/strategy
