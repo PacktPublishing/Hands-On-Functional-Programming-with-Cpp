@@ -8,6 +8,21 @@
             "-Wextra",
             "-Werror",
             "-o",
+            "out/adapter",
+            "adapter.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter10",
+        "file": "adapter.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
             "out/strategy",
             "strategy.cpp"
         ],
