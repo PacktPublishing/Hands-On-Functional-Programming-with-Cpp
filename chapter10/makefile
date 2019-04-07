@@ -1,4 +1,4 @@
-all: strategy adapter
+all: strategy dependencyinjection
 
 .outputFolder:
 	mkdir -p out
@@ -10,3 +10,7 @@ strategy : .outputFolder
 adapter: .outputFolder
 	g++ -std=c++17 adapter.cpp -Wall -Wextra -Werror -o out/adapter
 	./out/adapter
+
+dependencyinjection : .outputFolder
+	g++ -std=c++17 dependencyinjection.cpp -Wall -Wextra -Werror -o out/dependencyinjection
+	./out/dependencyinjection

@@ -8,11 +8,11 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/adapter",
-            "adapter.cpp"
+            "out/dependencyinjection",
+            "dependencyinjection.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "adapter.cpp"
+        "file": "dependencyinjection.cpp"
     },
     {
         "arguments": [
