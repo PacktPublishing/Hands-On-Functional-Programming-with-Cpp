@@ -1,0 +1,17 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/performance",
+            "performance.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter11",
+        "file": "performance.cpp"
+    }
+]
