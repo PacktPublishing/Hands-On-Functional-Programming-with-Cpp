@@ -4,5 +4,5 @@ all: performance
 	mkdir -p out
 
 performance: .outputFolder
-	g++ -std=c++17 performance.cpp -Wall -Wextra -Werror -o out/performance
-	./out/performance
+	g++ -std=c++17 parallelExecution.cpp -Wall -Wextra -Werror -o out/parallelExecution
+	./out/parallelExecution
