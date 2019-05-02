@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+LOG_FILE=$1
+rm -f ./out/$1
+./out/memoryOptimization&
+APP_PID=$!
+echo $APP_PID
+watch -e -n0.1 'grep VmSize /proc/'$APP_PID'/status >> ./out/'$LOG_FILE
+exit 0

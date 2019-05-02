@@ -8,10 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/performance",
-            "performance.cpp"
+            "out/memoryOptimization",
+            "memoryOptimization.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter11",
-        "file": "performance.cpp"
+        "file": "memoryOptimization.cpp"
     }
 ]
