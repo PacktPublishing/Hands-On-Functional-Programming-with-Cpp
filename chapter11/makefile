@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-all: parallelExecution memoization tailRecursion optimizedTailRecursion fullyOptimizedTailRecursion compileMemoryOptimization 
+all: parallelExecution memoization tailRecursion optimizedTailRecursion fullyOptimizedTailRecursion immutableDataStructures
 
 .outputFolder:
 	mkdir -p out
@@ -24,9 +24,6 @@ optimizedTailRecursion: .outputFolder
 fullyOptimizedTailRecursion: .outputFolder
 	g++ -std=c++17 -O3 tailRecursion.cpp -Wall -Wextra -Werror -o out/fullyOptimizedTailRecursion
 	./out/fullyOptimizedTailRecursion
-
-compileMemoryOptimization: .outputFolder
-	g++ -DNO_MOVE_ITERATOR -DMOVE_ITERATOR -DIN_PLACE -std=c++17 memoryOptimization.cpp -Wall -Wextra -Werror -o out/memoryOptimization
 
 memoryConsumptionNoMoveIterator: .outputFolder 
 	g++ -O3 -DNO_MOVE_ITERATOR -std=c++17 memoryOptimization.cpp -Wall -Wextra -Werror -o out/memoryOptimization
