@@ -1,0 +1,30 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-o",
+            "out/propertyBasedTests",
+            "propertyBasedTests.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter12",
+        "file": "propertyBasedTests.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-O3",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/exampleBasedTests",
+            "exampleBasedTests.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter12",
+        "file": "exampleBasedTests.cpp"
+    }
+]
