@@ -60,6 +60,7 @@ auto logMaxIntBaseX = [](int x) -> int{
 auto generate_ints_greater_than_1 = bind(generate_ints, 1, numeric_limits<int>::max());
 auto generate_ints_greater_than_0 = bind(generate_ints, 0, numeric_limits<int>::max());
 auto generate_ints_greater_than_2_less_sqrt_maxInt = bind(generate_ints, 2, sqrt(numeric_limits<int>::max()));
+auto generate_ints_greater_than_sqrt_maxInt = bind(generate_ints, sqrt(numeric_limits<int>::max()) + 1, numeric_limits<int>::max());
 
 auto generate_exponent_less_than_log_maxInt = [](auto x){
     return generate_ints(1, logMaxIntBaseX(x));
@@ -121,4 +122,5 @@ TEST_CASE("Properties"){
 
     cout << "Property: next power of x is previous power of x multiplied by x" << endl;
     check_property(generate_ints_greater_than_2_less_sqrt_maxInt, prop_nextPowerOfXIsPreviousPowerOfXMultipliedByX, "generate greater than 2 and less than sqrt of maxInt");
+    check_property(generate_ints_greater_than_sqrt_maxInt, prop_nextPowerOfXIsPreviousPowerOfXMultipliedByX, "generate greater than sqrt of maxInt");
 }
