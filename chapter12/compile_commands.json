@@ -4,27 +4,29 @@
             "c++",
             "-c",
             "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
             "-o",
-            "out/propertyBasedTests",
-            "propertyBasedTests.cpp"
+            "out/dependencyinjection",
+            "dependencyinjection.cpp"
         ],
-        "directory": "/home/alexb/work/bookCode/chapter12",
-        "file": "propertyBasedTests.cpp"
+        "directory": "/home/alexb/work/bookCode/chapter10",
+        "file": "dependencyinjection.cpp"
     },
     {
         "arguments": [
             "c++",
             "-c",
             "-std=c++17",
-            "-O3",
             "-Wall",
             "-Wextra",
             "-Werror",
             "-o",
-            "out/exampleBasedTests",
-            "exampleBasedTests.cpp"
+            "out/strategy",
+            "strategy.cpp"
         ],
-        "directory": "/home/alexb/work/bookCode/chapter12",
-        "file": "exampleBasedTests.cpp"
+        "directory": "/home/alexb/work/bookCode/chapter10",
+        "file": "strategy.cpp"
     }
 ]
