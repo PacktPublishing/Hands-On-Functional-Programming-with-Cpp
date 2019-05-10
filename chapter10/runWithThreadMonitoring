@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+LOG_FILE=$1
+rm -f ./out/$1
+./out/asynchronousExecution&
+APP_PID=$!
+echo $APP_PID
+watch -e -n0.1 'grep Threads /proc/'$APP_PID'/status >> ./out/'$LOG_FILE
+exit 0

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-all: parallelExecution memoization tailRecursion optimizedTailRecursion fullyOptimizedTailRecursion immutableDataStructures
+all: parallelExecution memoization tailRecursion optimizedTailRecursion fullyOptimizedTailRecursion immutableDataStructures asyncExecution
 
 .outputFolder:
 	mkdir -p out
@@ -47,3 +47,6 @@ immutableDataStructures: .outputFolder
 	g++ -std=c++17 -I./immer-0.5.0 -O3 immutableDataStructures.cpp -o out/immutableDataStructures
 	./out/immutableDataStructures
 
+asyncExecution: .outputFolder
+	g++ -std=c++17 asynchronousExecution.cpp -lpthread -Wall -Wextra -Werror -o out/asynchronousExecution
+	./runWithThreadMonitoring threadMonitor.log

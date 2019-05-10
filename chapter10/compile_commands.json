@@ -8,10 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/memoryOptimization",
-            "memoryOptimization.cpp"
+            "out/asynchronousExecution",
+            "asynchronousExecution.cpp"
         ],
-        "directory": "/home/alexb/work/bookCode/chapter11",
-        "file": "memoryOptimization.cpp"
+        "directory": "/home/alexb/work/bookCode/chapter10",
+        "file": "asynchronousExecution.cpp"
     }
 ]
