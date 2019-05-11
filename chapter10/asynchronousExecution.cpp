@@ -47,51 +47,85 @@ TEST_CASE("Factorial"){
     CHECK_EQ(6, factorial(3));
 }
 
-TEST_CASE("is prime"){
+auto rangeFromTo = [](const int start, const int end){
+    vector<int> aVector(end);
+    iota(aVector.begin(), aVector.end(), start);
+    return aVector;
+};
 
-    vector<int> aVector(10000);
-    iota(aVector.begin(), aVector.end(), 1);
+auto rangeFrom1To = bind(rangeFromTo, 1, _1);
 
-    auto is_prime = [](int x) {
-      for (int i=2; i<x; ++i) if (x%i==0) return false;
-      return true;
-    };
+auto rangeFrom2To = bind(rangeFromTo, 2, _1);
 
-    auto are_primes = [&](auto aVector){
-        return transformAll<vector<bool>>(aVector, is_prime);
-    };
+auto isDivisibleBy = [](auto value, auto factor){
+    return value % factor == 0;
+};
 
-    auto all_primes_for_aVector = bind(are_primes, aVector);
+auto all_of_collection = [](auto aCollection, auto lambda){
+    return all_of(aCollection.begin(), aCollection.end(), lambda);
+};
 
-    auto sequentialDuration = measureExecutionTimeForF(all_primes_for_aVector);
+auto is_prime = [](int x) {
+    return all_of_collection(
+            rangeFrom2To(x), 
+            bind(isDivisibleBy, x, _1)
+        );
+};
+
+auto are_primes = [](auto aVector){
+    return transformAll<vector<bool>>(aVector, is_prime);
+};
+
+auto isPrimeSequential = [](auto aVector){
+    auto sequentialDuration = measureExecutionTimeForF(bind(are_primes, aVector));
     cout << "is prime sequential execution time:" << sequentialDuration.count() << " ns" << endl;
+};
 
-    /*auto naiveAsyncDuration = measureExecutionTimeForF(
-            [&](){
-                future<vector<long long>> result(async(all_factorials, aVector));
-                return result.get();
+auto arePrimesAsync = [](auto aVector){
+    auto naiveAsyncDuration = measureExecutionTimeForF([&](){
+            return async(are_primes, aVector).get();
     });
-
     cout << "Async execution time naive:" << naiveAsyncDuration.count() << " ns" << endl;
-   */ 
-    auto asyncDuration = measureExecutionTimeForF(
-            [&](){
-                    vector<future<bool>> futures(aVector.size()); 
-                    for(const int& value : aVector){
-                        futures.push_back(future<bool>(async(is_prime, value)));
-                    }
+};
 
-                    vector<bool> results(aVector.size());
-                    for(auto& aFuture : futures){
-                        results.push_back(aFuture.get());
-                    }
+auto runAsync = [](auto aVector){
+    vector<future<bool>> futures(aVector.size()); 
+    for(const int& value : aVector){
+        futures.emplace_back(async(launch::async, is_prime, value));
+    }
 
-                    for(auto result : results){
-                        cout << result << endl;
-                    }
-                    return results;
-            });
+    vector<bool> results(aVector.size());
+    for(future<bool>& aFuture : futures){
+        if(aFuture.valid()){ 
+            auto value = aFuture.get();
+            results.push_back(value);
+        }
+        else {
+            results.push_back(false);
+            cout << "Invalid future!" << endl;
+        }
+    }
+
+    for(auto result : results){
+        cout << result << ", ";
+    }
+
+    cout << endl;
+    return results;
+};
+
+auto measureRunAsync = [](auto aVector){
+    auto asyncDuration = measureExecutionTimeForF(bind(runAsync, aVector));
     cout << "is prime async execution time:" << asyncDuration.count() << " ns" << endl;
+};
+
+
+TEST_CASE("is prime"){
+    auto aVector = rangeFrom1To(10);
+
+    isPrimeSequential(aVector);
+    arePrimesAsync(aVector);
+    measureRunAsync(aVector);
 }
 
 TEST_CASE("all_of with sequential execution policy"){
@@ -99,7 +133,7 @@ TEST_CASE("all_of with sequential execution policy"){
     iota(aVector.begin(), aVector.end(), 1);
 
     auto all_factorials = [&](auto aVector){
-        return transformAll<vector<long long>>(aVector, factorial);
+        return transformAll<vector<long>>(aVector, factorial);
     };
 
     auto all_factorials_for_aVector = bind(all_factorials, aVector);
@@ -108,27 +142,26 @@ TEST_CASE("all_of with sequential execution policy"){
     cout << "Sequential execution time:" << sequentialDuration.count() << " ns" << endl;
 
     /*auto naiveAsyncDuration = measureExecutionTimeForF(
-            [&](){
-                future<vector<long long>> result(async(all_factorials, aVector));
-                return result.get();
-    });
+      [&](){
+      future<vector<long long>> result(async(all_factorials, aVector));
+      return result.get();
+      });
 
-    cout << "Async execution time naive:" << naiveAsyncDuration.count() << " ns" << endl;
-   */ 
+      cout << "Async execution time naive:" << naiveAsyncDuration.count() << " ns" << endl;
+      */ 
     auto asyncDuration = measureExecutionTimeForF(
             [&](){
-                    auto futures = transformAll<vector<future<long long>>>(aVector,
-                        [&](auto value){
-                            return future<long long>(async(factorial, value));
-                        });
+            auto futures = transformAll<vector<future<long long>>>(aVector,
+                    [&](auto value){
+                    return future<long long>(async(factorial, value));
+                    });
 
-                    vector<long long> results(futures.size());
-                    transform(futures.begin(), futures.end(), results.begin(), 
-                            [](future<long long>& aFuture){ 
-                                return aFuture.get();
-                            }
-                    );
-                    return results;
+            vector<long long> results(futures.size());
+            transform(futures.begin(), futures.end(), results.begin(), 
+                    [](future<long long>& aFuture){ 
+                    return aFuture.get();
+                    });
+            return results;
             });
     cout << "Async execution time:" << asyncDuration.count() << " ns" << endl;
 }
