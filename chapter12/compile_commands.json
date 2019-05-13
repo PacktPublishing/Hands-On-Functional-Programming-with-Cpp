@@ -8,25 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/dependencyinjection",
-            "dependencyinjection.cpp"
+            "out/computeSalaries",
+            "computeSalaries.cpp"
         ],
-        "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "dependencyinjection.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-std=c++17",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-o",
-            "out/strategy",
-            "strategy.cpp"
-        ],
-        "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "strategy.cpp"
+        "directory": "/home/alexb/work/bookCode/chapter12",
+        "file": "computeSalaries.cpp"
     }
 ]
