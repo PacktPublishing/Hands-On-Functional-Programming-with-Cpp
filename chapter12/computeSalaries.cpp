@@ -32,7 +32,7 @@ int main(){
         if(position == "Developer") baseSalary = 2000;
         if(position == "Team Leader") baseSalary = 3000;
         if(position == "Manager") baseSalary = 4000;
-        
+
         double factor;
         if(seniority_level == "Entry") factor = 1;
         if(seniority_level == "Junior") factor = 1.2;
