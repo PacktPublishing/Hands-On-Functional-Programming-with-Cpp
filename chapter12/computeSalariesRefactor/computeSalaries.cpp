@@ -2,18 +2,10 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <functional>
+#include "computeSalaries.h"
 
 using namespace std;
-
-auto doesSomething = [](const string& position){
-        int baseSalary;
-        if(position == "Tester") baseSalary = 1500;
-        if(position == "Analyst") baseSalary = 1600;
-        if(position == "Developer") baseSalary = 2000;
-        if(position == "Team Leader") baseSalary = 3000;
-        if(position == "Manager") baseSalary = 4000;
-        return baseSalary;
-};
 
 int main(){
     string id;
@@ -36,33 +28,11 @@ int main(){
         getline(employeesFile, special_bonus_level);
         if(id == "id") continue;
 
-        int baseSalary;
-        if(position == "Tester") baseSalary = 1500;
-        if(position == "Analyst") baseSalary = 1600;
-        if(position == "Developer") baseSalary = 2000;
-        if(position == "Team Leader") baseSalary = 3000;
-        if(position == "Manager") baseSalary = 4000;
-
-        double factor;
-        if(seniority_level == "Entry") factor = 1;
-        if(seniority_level == "Junior") factor = 1.2;
-        if(seniority_level == "Senior") factor = 1.5;
-
-        double continuityFactor;
-        int continuity = stoi(years_worked_continuously);
-        if(continuity < 3) continuityFactor = 1;
-        if(continuity >= 3 && continuity < 5) continuityFactor = 1.2;
-        if(continuity >= 5 && continuity < 10) continuityFactor = 1.5;
-        if(continuity >=10 && continuity <= 20) continuityFactor = 1.7;
-        if(continuity > 20) continuityFactor = 2;
-
-        int specialBonusLevel = stoi(special_bonus_level);
-        double specialBonusFactor = specialBonusLevel * 0.03;
-
-        double currentSalary = baseSalary * factor * continuityFactor;
-        double salary = currentSalary + specialBonusFactor * currentSalary;
-
-        int roundedSalary = ceil(salary);
+        auto roundedSalary = computeSalary(
+                bind(baseSalaryForPosition, position), 
+                bind(factorForSeniority, seniority_level),
+        bind(factorForContinuity, years_worked_continuously),
+        bind(bonusLevel, special_bonus_level));
 
         cout  << seniority_level << position << " " << first_name << " " << last_name << " (" << years_worked_continuously << "yrs)" <<  ", " << employee_id << ", has salary (bonus level  " << special_bonus_level << ") " << roundedSalary << endl;
     }

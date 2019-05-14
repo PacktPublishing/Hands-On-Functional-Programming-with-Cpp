@@ -4,14 +4,15 @@
             "c++",
             "-c",
             "-std=c++17",
+            "computeSalaries.h",
             "-Wall",
             "-Wextra",
             "-Werror",
             "-o",
-            "out/computeSalaries",
-            "computeSalaries.cpp"
+            "out/computeSalariesTest",
+            "computeSalariesTest.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter12/computeSalariesRefactor",
-        "file": "computeSalaries.cpp"
+        "file": "computeSalariesTest.cpp"
     }
 ]
