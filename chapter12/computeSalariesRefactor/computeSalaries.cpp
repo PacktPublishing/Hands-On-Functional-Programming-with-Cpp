@@ -28,9 +28,11 @@ int main(){
         getline(employeesFile, special_bonus_level);
         if(id == "id") continue;
 
+        BaseSalaryForPosition theBaseSalaryForPosition(position);
+
         auto bonusFactor = bind(specialBonusFactor, [&](){ return bonusLevel(special_bonus_level); } );
         auto roundedSalary = computeSalary(
-                bind(baseSalaryForPosition, position), 
+                theBaseSalaryForPosition,
                 bind(factorForSeniority, seniority_level),
                 bind(factorForContinuity, years_worked_continuously),
                 bonusFactor

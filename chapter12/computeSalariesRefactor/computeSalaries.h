@@ -19,6 +19,24 @@ auto baseSalaryForPosition = [](const string& position){
     return baseSalary;
 };
 
+class BaseSalaryForPosition{
+    private:
+        const string& position;
+
+    public:
+        BaseSalaryForPosition(const string& position) : position(position){};
+
+        int baseSalaryForPosition() const{
+            int baseSalary;
+            if(position == "Tester") baseSalary = 1500;
+            if(position == "Analyst") baseSalary = 1600;
+            if(position == "Developer") baseSalary = 2000;
+            if(position == "Team Leader") baseSalary = 3000;
+            if(position == "Manager") baseSalary = 4000;
+            return baseSalary;
+        }
+};
+
 auto factorForSeniority = [](const string& seniority_level){
     double factor;
     if(seniority_level == "Entry") factor = 1;
@@ -42,18 +60,12 @@ auto bonusLevel = [](const string& special_bonus_level){
     return stoi(special_bonus_level);
 };
 
-auto specialBonusFactor = [] (auto bonusLevel) -> double {
+auto specialBonusFactor = [] (auto bonusLevel) {
     return bonusLevel() * 0.03;
 };
 
-auto computeSalary = [](auto baseSalaryForPosition, auto factorForSeniority, auto factorForContinuity, auto bonusFactor){
-    int baseSalary = baseSalaryForPosition();
-    double factor = factorForSeniority();
-    double continuityFactor = factorForContinuity();
-
-    double currentSalary = baseSalary * factor * continuityFactor;
-    double salary = currentSalary + bonusFactor() * currentSalary;
-
-    int roundedSalary = ceil(salary);
-    return roundedSalary;
+auto computeSalary = [](const BaseSalaryForPosition& baseSalaryForPosition, auto factorForSeniority, auto factorForContinuity, auto bonusFactor){
+    return ceil (
+            (1 + bonusFactor()) * baseSalaryForPosition.baseSalaryForPosition() * factorForSeniority() * factorForContinuity()
+            );
 };
