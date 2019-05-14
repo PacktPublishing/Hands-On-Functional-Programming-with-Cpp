@@ -2,6 +2,13 @@
 #include <cmath>
 using namespace std;
 
+template<typename F, typename G>
+auto compose(F f, G g){
+    return [f, g](auto x){
+        return f(g(x));
+    };
+};
+
 auto baseSalaryForPosition = [](const string& position){
     int baseSalary;
     if(position == "Tester") baseSalary = 1500;
@@ -35,16 +42,17 @@ auto bonusLevel = [](const string& special_bonus_level){
     return stoi(special_bonus_level);
 };
 
-auto computeSalary = [](auto baseSalaryForPosition, auto factorForSeniority, auto factorForContinuity, auto bonusLevel){
+auto specialBonusFactor = [] (auto bonusLevel) -> double {
+    return bonusLevel() * 0.03;
+};
+
+auto computeSalary = [](auto baseSalaryForPosition, auto factorForSeniority, auto factorForContinuity, auto bonusFactor){
     int baseSalary = baseSalaryForPosition();
     double factor = factorForSeniority();
     double continuityFactor = factorForContinuity();
-    int specialBonusLevel =  bonusLevel();
-
-    double specialBonusFactor = specialBonusLevel * 0.03;
 
     double currentSalary = baseSalary * factor * continuityFactor;
-    double salary = currentSalary + specialBonusFactor * currentSalary;
+    double salary = currentSalary + bonusFactor() * currentSalary;
 
     int roundedSalary = ceil(salary);
     return roundedSalary;

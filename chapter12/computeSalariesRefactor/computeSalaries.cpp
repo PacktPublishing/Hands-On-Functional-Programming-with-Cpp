@@ -28,11 +28,13 @@ int main(){
         getline(employeesFile, special_bonus_level);
         if(id == "id") continue;
 
+        auto bonusFactor = bind(specialBonusFactor, [&](){ return bonusLevel(special_bonus_level); } );
         auto roundedSalary = computeSalary(
                 bind(baseSalaryForPosition, position), 
                 bind(factorForSeniority, seniority_level),
-        bind(factorForContinuity, years_worked_continuously),
-        bind(bonusLevel, special_bonus_level));
+                bind(factorForContinuity, years_worked_continuously),
+                bonusFactor
+            );
 
         cout  << seniority_level << position << " " << first_name << " " << last_name << " (" << years_worked_continuously << "yrs)" <<  ", " << employee_id << ", has salary (bonus level  " << special_bonus_level << ") " << roundedSalary << endl;
     }
