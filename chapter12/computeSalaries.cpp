@@ -27,7 +27,7 @@ int main(){
         if(id == "id") continue;
 
         int baseSalary;
-        if(position == "Tester") baseSalary= 1500;
+        if(position == "Tester") baseSalary = 1500;
         if(position == "Analyst") baseSalary = 1600;
         if(position == "Developer") baseSalary = 2000;
         if(position == "Team Leader") baseSalary = 3000;
