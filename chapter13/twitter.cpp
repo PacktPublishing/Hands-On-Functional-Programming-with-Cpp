@@ -10,9 +10,52 @@
 using namespace std;
 using namespace std::placeholders;
 
-class EventStore : public list<map<string, string>>{
+typedef map<string, string> Event;
+
+class User{
     public:
-        EventStore() : list<map<string, string>>(){
+        int id;
+        string handle;
+        User(){};
+        User(int id, string handle): id(id), handle(handle){};
+};
+
+bool operator==(const User& first, const User& second){
+    return first.id == second.id && first.handle == second.handle;
+};
+
+class DataStore{
+    public:
+        list<User> users;
+};
+
+auto createUserEventToUser = [](Event event){
+    return User(stoi(event["id"]), event["handle"]);
+};
+
+auto filterEventByEventType = [](Event event, const auto& eventType){ 
+    return event["type"] == eventType;
+};
+
+template<typename Entity>
+auto playEvents = [](const auto& events, const auto& eventType, auto playEvent){
+    list<Event> allEventsOfType;
+    auto filterEventByThisEventType = bind(filterEventByEventType, _1, eventType);
+    copy_if(events.begin(), events.end(), back_insert_iterator(allEventsOfType), filterEventByThisEventType);
+    list<Entity> entities(allEventsOfType.size());
+    transform(allEventsOfType.begin(), allEventsOfType.end(), entities.begin(), playEvent); 
+    return entities;
+};
+
+class EventStore : public list<Event>{
+    public:
+        EventStore() : list<Event>(){
+        };
+
+        DataStore play(){
+            DataStore dataStore;
+            dataStore.users = playEvents<User>(*this, "CreateUser", createUserEventToUser);
+            return dataStore;
         };
 };
 
@@ -43,24 +86,24 @@ auto getNextId = [](pair<int, function<int(int)>> previous){
     return makeNext(newValue, functionToApply);
 };
 
-int id = 1;
 
 auto makeCreateUserEvent = [](const string& handle, const int id){
-    return map<string, string>{
-            {"type", "CreateUser"}, 
+    return Event{
+        {"type", "CreateUser"}, 
             {"handle", handle}, 
             {"id", to_string(id)}
     };
 };
 
+int id = 1;
 auto createUser = [](string handle, EventStore& eventStore){
     eventStore.push_back(makeCreateUserEvent(handle, id));
     return id;
 };
 
 auto makePostMessageEvent = [](const int userId, const string& message, int id){
-    return map<string, string>{
-            {"type", "PostMessage"}, 
+    return Event{
+        {"type", "PostMessage"}, 
             {"userId", to_string(userId)}, 
             {"message", message},
             {"id", to_string(id)}
@@ -104,6 +147,17 @@ TEST_CASE("Post Message"){
     auto event = eventStore.back();
     CHECK_EQ(event, expectedEvent);
 }
+
+TEST_CASE("Run events and get the user store"){
+    auto handle = "alexboly";
+    EventStore eventStore;
+
+    auto alexId = createUser(handle, eventStore);
+    auto dataStore = eventStore.play();
+
+    CHECK_EQ(dataStore.users.back(), User(alexId, handle));
+}
+
 
 //    createUser("johndoe", eventStore);
 //    postMessage(alexId, "Hello, world!");

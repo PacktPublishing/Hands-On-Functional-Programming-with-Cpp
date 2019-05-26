@@ -1,0 +1,17 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/twitter",
+            "twitter.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter13",
+        "file": "twitter.cpp"
+    }
+]
