@@ -59,34 +59,6 @@ class EventStore : public list<Event>{
         };
 };
 
-auto makeNext = [](auto value, auto lambda){
-    return make_pair(value, lambda);
-};
-
-auto value = [](auto previous){
-    return previous.first;
-};
-
-auto lambda = [](auto previous){
-    return previous.second;
-};
-
-auto initNextId = [](int initialId){
-    function<int(int)> nextId = [](int lastId){
-        return lastId + 1;
-    };
-
-    return makeNext(initialId, nextId);
-};
-
-auto getNextId = [](pair<int, function<int(int)>> previous){
-    auto previousId = value(previous);
-    auto functionToApply = lambda(previous);
-    int newValue = functionToApply(previousId);
-    return makeNext(newValue, functionToApply);
-};
-
-
 auto makeCreateUserEvent = [](const string& handle, const int id){
     return Event{
         {"type", "CreateUser"}, 
@@ -114,15 +86,6 @@ auto postMessage = [](const int userId, const string& message, EventStore& event
     eventStore.push_back(makePostMessageEvent(userId, message, id));
     return id;
 };
-
-TEST_CASE("Id"){
-    auto idGenerator = initNextId(1);
-
-    CHECK_EQ(1, value(idGenerator)); 
-
-    idGenerator = getNextId(idGenerator);
-    CHECK_EQ(2, value(idGenerator)); 
-}
 
 TEST_CASE("Create User"){
     auto handle = "alexboly";
@@ -157,10 +120,3 @@ TEST_CASE("Run events and get the user store"){
 
     CHECK_EQ(dataStore.users.back(), User(alexId, handle));
 }
-
-
-//    createUser("johndoe", eventStore);
-//    postMessage(alexId, "Hello, world!");
-//    postMessage(johnId, "Hi @alexboly");
-//    auto messageId = postMessage(alexId, "Hi @johndoe");
-//    likeMessage(johnId, messageId);
