@@ -1,0 +1,34 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Iinclude/",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/functional",
+            "functional.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter15",
+        "file": "functional.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Iinclude/",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/algorithm",
+            "algorithm.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter15",
+        "file": "algorithm.cpp"
+    }
+]
