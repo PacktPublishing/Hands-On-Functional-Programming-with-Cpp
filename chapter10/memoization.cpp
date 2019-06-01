@@ -36,9 +36,40 @@ auto printDuration = [](string message, auto f){
     cout << message  << duration.count() << " ns" << endl;
 };
 
+template<typename ReturnType, typename FirstArgType, typename SecondArgType>
+auto memoizeTwoParams = [](function<ReturnType(FirstArgType, SecondArgType)> functionToMemoize){
+    map<tuple<FirstArgType, SecondArgType>, ReturnType> cache;
+    return [=](FirstArgType firstArg, SecondArgType secondArg) mutable {
+        tuple<FirstArgType, SecondArgType> parameters(firstArg, secondArg);
+        auto valueIterator = cache.find(parameters);
+        ReturnType result;
+        if(valueIterator == cache.end()){
+            result = functionToMemoize(firstArg, secondArg);
+            cache[parameters] = result;
+        } else{
+            result = valueIterator -> second;
+        }
+        return result; 
+    };
+};
+
+TEST_CASE("Wrapped pow"){
+    function<long long(int, int)> power = [](int base, int exponent) -> long long{
+        return pow(base, exponent);
+    };
+
+
+    auto memoizedPower = memoizeTwoParams<long long, int, int>(power);
+
+    CHECK_EQ(power(1, 1), memoizedPower(1, 1));
+    CHECK_EQ(power(3, 19), memoizedPower(3, 19));
+    CHECK_EQ(power(2, 25), memoizedPower(2, 25));
+};
+
+
 TEST_CASE("Pow vs memoized pow"){
-    function<int(int, int)> power = [](auto first, auto second){
-        return first ^ second;
+    function<long long(int, int)> power = [&](auto base, auto exponent){
+        return (exponent == 0) ? 1 : base * power(base, exponent - 1);
     };
 
     cout << "Computing pow" << endl;
@@ -47,11 +78,26 @@ TEST_CASE("Pow vs memoized pow"){
     printDuration("Third call no memoization: ", [&](){return power(9, 176);});
     printDuration("Fourth call no memoization (same as first call): ", [&](){return power(5, 24);});
 
-    auto powerWithMemoization = memoize(power);
-    printDuration("First call with memoization: ",  [&](){ return powerWithMemoization(5, 24);});
-    printDuration("Second call with memoization: ", [&](){return powerWithMemoization(3, 1024);});
-    printDuration("Third call with memoization: ", [&](){return powerWithMemoization(9, 176);});
-    printDuration("Fourth call with memoization (same as first call): ", [&](){return powerWithMemoization(5, 24);});
+    map<tuple<int, int>, long long> cache;
+    function<long long(int, int)> powerWithMemoization = [&](auto base, auto exponent) -> long long{
+        if(exponent == 0) return 1;
+        long long value;
+
+        tuple<int, int> parameters(base, exponent);
+        auto valueIterator = cache.find(parameters);
+        if(valueIterator == cache.end()){
+            value = base * powerWithMemoization(base, exponent - 1);
+            cache[parameters] = value;
+        } else {
+            value = valueIterator->second;
+        };
+        return value;
+    };
+
+    printDuration("First call with recursive memoization: ",  [&](){ return powerWithMemoization(5, 24);});
+    printDuration("Second call with recursive memoization: ", [&](){return powerWithMemoization(3, 1024);});
+    printDuration("Third call with recursive memoization: ", [&](){return powerWithMemoization(9, 176);});
+    printDuration("Fourth call with recursive memoization (same as first call): ", [&](){return powerWithMemoization(5, 24);});
     cout << "DONE computing pow" << endl;
 
     CHECK_EQ(power(5, 24),  powerWithMemoization(5, 24));

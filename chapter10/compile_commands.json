@@ -8,10 +8,25 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/asynchronousExecution",
-            "asynchronousExecution.cpp"
+            "out/parallelExecution",
+            "parallelExecution.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "asynchronousExecution.cpp"
+        "file": "parallelExecution.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/memoization",
+            "memoization.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter10",
+        "file": "memoization.cpp"
     }
 ]
