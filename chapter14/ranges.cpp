@@ -103,4 +103,38 @@ TEST_CASE("Linear distributed"){
     CHECK_EQ(expected, values);
 }
 
+auto identity = [](auto value){
+    return value;
+};
+
+TEST_CASE("Custom generation"){
+    using namespace ranges;
+    vector<long> expected{ 2, 2048, 2097152, 2147483648 };
+
+    auto everyTenthPowerOfTwo = view::ints(1) | view::for_each([](int i){ return yield_if(i % 10 == 1, pow(2, i)); });
+    vector<long> values = everyTenthPowerOfTwo | view::take(4);
+
+    CHECK_EQ(expected, values);
+}
+
+TEST_CASE("Custom generation"){
+    using namespace ranges;
+    vector<long> expected{ 2, 2048, 2097152, 2147483648 };
+
+    auto everyTenthPowerOfTwo = view::ints(1) | view::stride(10) | view::transform([](int i){ return pow(2, i); });
+    vector<long> values = everyTenthPowerOfTwo | view::take(4);
+
+    CHECK_EQ(expected, values);
+}
+
+TEST_CASE("Generate chars"){
+    using namespace ranges;
+
+    vector<char> chars = view::ints(32, 126) | view::sample(10) | view::transform([](int asciiCode){ return char(asciiCode); });
+    string aString(chars.begin(), chars.end()); 
+
+    cout << aString << endl;
+
+    CHECK_EQ(10, aString.size());
+}
 
