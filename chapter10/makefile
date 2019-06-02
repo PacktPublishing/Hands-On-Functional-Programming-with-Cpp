@@ -50,4 +50,7 @@ immutableDataStructures: .outputFolder
 asyncExecution: .outputFolder
 	g++ -std=c++17 asynchronousExecution.cpp -lpthread -Wall -Wextra -Werror -o out/asynchronousExecution
 	./out/asynchronousExecution
-	#./runWithThreadMonitoring threadMonitor.log
+
+reactive: .outputFolder
+	g++ -std=c++17 reactive.cpp -lpthread -Wall -Wextra -Werror -o out/reactive
+	./out/reactive

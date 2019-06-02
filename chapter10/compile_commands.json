@@ -8,25 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/parallelExecution",
-            "parallelExecution.cpp"
+            "out/reactive",
+            "reactive.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "parallelExecution.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-std=c++17",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-o",
-            "out/memoization",
-            "memoization.cpp"
-        ],
-        "directory": "/home/alexb/work/bookCode/chapter10",
-        "file": "memoization.cpp"
+        "file": "reactive.cpp"
     }
 ]
