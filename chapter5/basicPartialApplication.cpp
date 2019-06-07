@@ -76,7 +76,7 @@ class AddOperation{
 
     public:
         AddOperation(int first, int second): first(first), second(second){}
-        int add(){ return first + second;}
+        int add() const { return first + second;}
 };
 
 
