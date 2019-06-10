@@ -8,10 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/computeSalaries",
-            "computeSalaries.cpp"
+            "out/state",
+            "state.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter12",
-        "file": "computeSalaries.cpp"
+        "file": "state.cpp"
     }
 ]

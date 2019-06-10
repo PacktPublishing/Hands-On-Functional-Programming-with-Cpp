@@ -1,4 +1,4 @@
-all: computeSalaries strategy dependencyinjection
+all: computeSalaries strategy dependencyinjection autoincrement state
 
 .outputFolder:
 	mkdir -p out
@@ -14,3 +14,11 @@ strategy : .outputFolder
 dependencyinjection : .outputFolder
 	g++ -std=c++17 dependencyinjection.cpp -Wall -Wextra -Werror -o out/dependencyinjection
 	./out/dependencyinjection
+
+autoincrement: .outputFolder
+	g++ -std=c++17 autoincrement.cpp -Wall -Wextra -Werror -o out/autoincrement
+	./out/autoincrement
+
+state: .outputFolder
+	g++ -std=c++17 state.cpp -Wall -Wextra -Werror -o out/state
+	./out/state
