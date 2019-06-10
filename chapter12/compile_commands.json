@@ -8,10 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/state",
-            "state.cpp"
+            "out/maybe",
+            "maybe.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter12",
-        "file": "state.cpp"
+        "file": "maybe.cpp"
     }
 ]

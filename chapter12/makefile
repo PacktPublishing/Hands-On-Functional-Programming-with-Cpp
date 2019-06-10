@@ -1,4 +1,4 @@
-all: computeSalaries strategy dependencyinjection autoincrement state
+all: computeSalaries strategy dependencyinjection autoincrement state maybe
 
 .outputFolder:
 	mkdir -p out
@@ -22,3 +22,7 @@ autoincrement: .outputFolder
 state: .outputFolder
 	g++ -std=c++17 state.cpp -Wall -Wextra -Werror -o out/state
 	./out/state
+
+maybe: .outputFolder
+	g++ -std=c++17 maybe.cpp -Wall -Wextra -Werror -o out/maybe
+	./out/maybe
