@@ -8,10 +8,10 @@
             "-Wextra",
             "-Werror",
             "-o",
-            "out/maybe",
-            "maybe.cpp"
+            "out/write",
+            "write.cpp"
         ],
         "directory": "/home/alexb/work/bookCode/chapter12",
-        "file": "maybe.cpp"
+        "file": "write.cpp"
     }
 ]

@@ -38,15 +38,15 @@ TEST_CASE("Compute with optional"){
 }
 
 TEST_CASE("Compute with optional"){
-    auto propagate_none = [](const function<int(int, int)> operation){
+    auto makeOptional = [](const function<int(int, int)> operation){
         return [operation](const optional<int> first, const optional<int> second) -> optional<int>{
             if(first == nullopt || second == nullopt) return nullopt;
             return make_optional(operation(first.value(), second.value()));
         };
     };
 
-    auto plusOptional = propagate_none(plus<int>());
-    auto divideOptional = propagate_none(divides<int>());
+    auto plusOptional = makeOptional(plus<int>());
+    auto divideOptional = makeOptional(divides<int>());
 
     CHECK_EQ(optional{3}, plusOptional(optional{1}, optional{2}));
     CHECK_EQ(nullopt, plusOptional(nullopt, optional{2}));
@@ -62,15 +62,15 @@ TEST_CASE("Compute with optional"){
         return (second == 0) ? nullopt : make_optional(first / second);
     };
 
-    auto propagate_none = [](const function<optional<int>(const int, const int)> operation){
+    auto makeOptional = [](const function<optional<int>(const int, const int)> operation){
         return [operation](const optional<int> first, const optional<int> second) -> optional<int>{
             if(first == nullopt || second == nullopt) return nullopt;
             return operation(first.value(), second.value());
         };
     };
 
-    auto plusOptional = propagate_none(plus<int>());
-    auto divideOptional = propagate_none(divideEvenWith0);
+    auto plusOptional = makeOptional(plus<int>());
+    auto divideOptional = makeOptional(divideEvenWith0);
 
     CHECK_EQ(optional{3}, plusOptional(optional{1}, optional{2}));
     CHECK_EQ(nullopt, plusOptional(nullopt, optional{2}));
@@ -85,7 +85,7 @@ TEST_CASE("Compute with optional"){
 template<typename ValueType>
 struct Maybe{
     typedef function<optional<ValueType>(const ValueType, const ValueType)> OperationType;
-    optional<ValueType> value;
+    const optional<ValueType> value;
     
     optional<ValueType> apply(const OperationType operation, const optional<ValueType> second){
         if(value == nullopt || second == nullopt) return nullopt;
@@ -93,7 +93,7 @@ struct Maybe{
     }
 };
 
-TEST_CASE("Compute with optional"){
+TEST_CASE("Compute with Maybe monad"){
     function<optional<int>(const int, const int)> divideEvenWith0 = [](const int first, const int second) -> optional<int>{
         return (second == 0) ? nullopt : make_optional(first / second);
     };
