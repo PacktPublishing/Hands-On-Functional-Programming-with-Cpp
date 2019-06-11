@@ -22,7 +22,7 @@ TEST_CASE("all_of"){
     CHECK(all_of(abc.begin(), abc.end(), notChard));
 }
 
-auto all_of_collection = [](auto collection, auto lambda){
+auto all_of_collection = [](const auto& collection, auto lambda){
     return all_of(collection.begin(), collection.end(), lambda);
 };
 
@@ -44,7 +44,7 @@ TEST_CASE("any_of"){
     CHECK(any_of(abc.begin(), abc.end(), notChard));
 }
 
-auto any_of_collection = [](auto collection, auto lambda){
+auto any_of_collection = [](const auto& collection, auto lambda){
     return any_of(collection.begin(), collection.end(), lambda);
 };
 
@@ -66,14 +66,14 @@ TEST_CASE("transform"){
 }
 
 template<typename Destination>
-auto transform_all = [](auto const source, auto lambda){
+auto transform_all = [](const auto& source, auto lambda){
     Destination destination(source.size());
     transform(source.begin(), source.end(), destination.begin(), lambda);
     return destination;
 };
 
 template<>
-auto transform_all<string> = [](auto const source, auto lambda){
+auto transform_all<string> = [](const auto& source, auto lambda){
     string destination;
     transform(source.begin(), source.end(),  back_inserter(destination), lambda);
     return destination;
@@ -143,7 +143,7 @@ TEST_CASE("find if"){
     CHECK_EQ(resultNotFound, values.end());
 }
 
-auto findInCollection = [](auto collection, auto lambda){
+auto findInCollection = [](const auto& collection, auto lambda){
     auto result = find_if(collection.begin(), collection.end(), lambda);
     return (result == collection.end()) ? nullopt : optional(*result);
 };
