@@ -8,8 +8,8 @@ using namespace std::placeholders;
 
 class Calculator{
     private:
-        int first;
-        int second;
+        const int first;
+        const int second;
 
     public:
         Calculator(int first, int second): first(first), second(second){}
@@ -35,7 +35,7 @@ class Calculator{
 TEST_CASE("Adds"){
     Calculator calculator(1, 2);
 
-    int result = calculator.add();
+    const int result = calculator.add();
 
     CHECK_EQ(result, 3);
 }
@@ -43,7 +43,7 @@ TEST_CASE("Adds"){
 TEST_CASE("Multiplies"){
     Calculator calculator(3, 2);
 
-    int result = calculator.multiply();
+    const int result = calculator.multiply();
 
     CHECK_EQ(result, 6);
 }
@@ -51,7 +51,7 @@ TEST_CASE("Multiplies"){
 TEST_CASE("Modulo"){
     Calculator calculator(3, 2);
 
-    int result = calculator.mod();
+    const int result = calculator.mod();
 
     CHECK_EQ(result, 1);
 }
@@ -59,28 +59,28 @@ TEST_CASE("Modulo"){
 TEST_CASE("Revert"){
     Calculator calculator(3, 2);
 
-    int result = calculator.revert();
+    const int result = calculator.revert();
 
     CHECK_EQ(result, -3);
 }
 
-auto add = [](auto first, auto second){
+auto add = [](const auto first, const auto second){
     return first + second;
 };
 
-auto multiply = [](auto first, auto second){
+auto multiply = [](const auto first, const auto second){
     return first * second;
 };
 
-auto mod = [](auto first, auto second){
+auto mod = [](const auto first, const auto second){
     return first % second;
 };
 
-auto revert = [](auto value){
+auto revert = [](const auto value){
     return -value;
 };
 
-auto initialize = [] (auto first, auto second) -> map<string, function<int()>>{
+auto initialize = [] (const auto first, const auto second) -> map<string, function<int()>>{
     return  {
         {"add", bind(add, first, second)},
         {"multiply", bind(multiply, first, second)},
@@ -93,7 +93,7 @@ auto initialize = [] (auto first, auto second) -> map<string, function<int()>>{
 TEST_CASE("Adds"){
     auto calculator = initialize(1, 2);
 
-    int result = calculator["add"]();
+    const int result = calculator["add"]();
 
     CHECK_EQ(result, 3);
 }
@@ -101,7 +101,7 @@ TEST_CASE("Adds"){
 TEST_CASE("Multiplies"){
     auto calculator = initialize(3, 2);
 
-    int result = calculator["multiply"]();
+    const int result = calculator["multiply"]();
 
     CHECK_EQ(result, 6);
 }
@@ -109,7 +109,7 @@ TEST_CASE("Multiplies"){
 TEST_CASE("Modulo"){
     auto calculator = initialize(3, 2);
 
-    int result = calculator["mod"]();
+    const int result = calculator["mod"]();
 
     CHECK_EQ(result, 1);
 }
@@ -117,9 +117,7 @@ TEST_CASE("Modulo"){
 TEST_CASE("Revert"){
     auto calculator = initialize(3, 2);
 
-    int result = calculator["revert"]();
+    const int result = calculator["revert"]();
 
     CHECK_EQ(result, -3);
 }
-
-

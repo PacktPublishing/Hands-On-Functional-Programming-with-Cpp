@@ -7,70 +7,69 @@
 using namespace std;
 using namespace std::placeholders;
 
-typedef vector<char> Line;
-typedef vector<Line> Lines;
+using Line = vector<char>;
+using Lines = vector<Line>;
 
 template<typename DestinationType>
-auto transformAll = [](auto source, auto lambda){
+auto transformAll = [](const auto& source, const auto fn){
     DestinationType result;
-    transform(source.begin(), source.end(), back_inserter(result), lambda);
+    transform(source.begin(), source.end(), back_inserter(result), fn);
     return result;
 };
 
-auto toRange = [](auto const collection){
+auto toRange = [](const auto& collection){
     vector<int> range(collection.size());
     iota(begin(range), end(range), 0);
     return range;
 };
 
-auto concatenate = [](auto first, const auto second){
+auto concatenate = [](const auto& first, const auto& second){
     auto result(first);
     result.insert(result.end(), make_move_iterator(second.begin()), make_move_iterator(second.end()));
     return result;
 };
 
-auto concatenate3 = [](auto first, auto const second, auto const third){
+auto concatenate3 = [](const auto& first, const auto& second, const auto& third){
     return concatenate(concatenate(first, second), third);
 };
 
-typedef pair<int, int> Coordinate;
+using Coordinate = pair<int, int>;
 
-auto accessAtCoordinates = [](auto board, Coordinate coordinate){
+auto accessAtCoordinates = [](const auto& board, const Coordinate& coordinate){
     return board[coordinate.first][coordinate.second];
 };
 
-auto mainDiagonalCoordinates = [](const auto board){
+auto mainDiagonalCoordinates = [](const auto& board){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [](auto index){return make_pair(index, index);});
+    return transformAll<vector<Coordinate>>(range, [](const auto index){return make_pair(index, index);});
 };
 
-auto secondaryDiagonalCoordinates = [](const auto board){
+auto secondaryDiagonalCoordinates = [](const auto& board){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [board](auto index){return make_pair(index, board.size() - index - 1);});
+    return transformAll<vector<Coordinate>>(range, [board](const auto index){return make_pair(index, board.size() - index - 1);});
 };
 
-auto columnCoordinates = [](const auto board, auto columnIndex){
+auto columnCoordinates = [](const auto& board, const auto& columnIndex){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [columnIndex](auto index){return make_pair(index, columnIndex);});
+    return transformAll<vector<Coordinate>>(range, [columnIndex](const auto index){return make_pair(index, columnIndex);});
 };
 
 auto lineCoordinates = [](const auto board, auto lineIndex){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [lineIndex](auto index){return make_pair(lineIndex, index);});
+    return transformAll<vector<Coordinate>>(range, [lineIndex](const auto index){return make_pair(lineIndex, index);});
 };
 
-auto projectCoordinates = [](auto board, auto coordinates){
+auto projectCoordinates = [](const auto& board, const auto& coordinates){
     auto boardElementFromCoordinates = bind(accessAtCoordinates, board, _1);
     return transformAll<Line>(coordinates, boardElementFromCoordinates);
 };
 
-
 class BoardResult{
     private:
-        vector<Line> board;
+        const vector<Line> board;
 
     public:
-        BoardResult(vector<Line> board) : board(board){
+        BoardResult(vector<Line> board) : board{board}{
         };
 
         Lines allLinesColumnsAndDiagonals() const {
@@ -112,27 +111,26 @@ class BoardResult{
         }
 };
 
-auto allOfCollection = [](auto collection, auto lambda){
-    return all_of(collection.begin(), collection.end(), lambda);
+auto all_of_collection = [](const auto& collection, const auto& fn){
+    return all_of(collection.begin(), collection.end(), fn);
 };
 
-auto any_of_collection = [](auto collection, auto lambda){
-    return any_of(collection.begin(), collection.end(), lambda);
+auto any_of_collection = [](const auto& collection, const auto& fn){
+    return any_of(collection.begin(), collection.end(), fn);
 };
 
 template<typename SourceType, typename DestinationType>
-auto applyAllLambdasToValue = [](auto lambdas, auto value){
-    return transformAll<DestinationType>(lambdas, [value](auto lambda){ return lambda(value); } );
+auto applyAllLambdasToValue = [](const auto& fns, const auto& value){
+    return transformAll<DestinationType>(fns, [value](const auto& fn){ return fn(value); } );
 };
 
-auto lineFilledWith = [](auto const line, auto const tokenToCheck){
-    return allOfCollection(line, [&tokenToCheck](auto const token){ return token == tokenToCheck;});
+auto lineFilledWith = [](const auto& line, const auto& tokenToCheck){
+    return all_of_collection(line, [&tokenToCheck](const auto& token){ return token == tokenToCheck;});
 };
 
 template <typename CollectionBooleanOperation, typename CollectionProvider, typename Predicate>
-
 auto booleanOperationOnProvidedCollection(CollectionBooleanOperation collectionBooleanOperation, CollectionProvider collectionProvider, Predicate predicate){
-    return [=](auto collectionProviderSeed, auto predicateFirstParameter){
+    return [=](const auto& collectionProviderSeed, const auto& predicateFirstParameter){
         return collectionBooleanOperation(collectionProvider(collectionProviderSeed), 
                 bind(predicate, _1, predicateFirstParameter));
     };
@@ -142,18 +140,18 @@ auto booleanOperationOnProvidedCollection(CollectionBooleanOperation collectionB
 //auto xWins = bind(tokenWins, _1, 'X');
 //auto oWins = bind(tokenWins, _1, 'O');
 
-auto noneOf = [](auto collection, auto lambda){
-    return none_of(collection.begin(), collection.end(), lambda);
+auto noneOf = [](const auto& collection, const auto& fn){
+    return none_of(collection.begin(), collection.end(), fn);
 };
 
-auto isEmpty = [](auto token){return token == ' ';};
+auto isEmpty = [](const auto& token){return token == ' ';};
 
-auto isNotEmpty= [](auto token){return token != ' ';};
+auto isNotEmpty= [](const auto& token){return token != ' ';};
 
-auto fullLine = bind(allOfCollection, _1, isNotEmpty);
+auto fullLine = bind(all_of_collection, _1, isNotEmpty);
 
-auto full = [](auto board){
-    return allOfCollection(board, fullLine);
+auto full = [](const auto& board){
+    return all_of_collection(board, fullLine);
 };
 
 //auto draw = [](auto const board){
@@ -164,13 +162,13 @@ auto full = [](auto board){
 //    return !full(board) && !xWins(board) && !oWins(board); 
 //};
 
-auto findInCollection = [](auto collection, auto lambda){
-    auto result = find_if(collection.begin(), collection.end(), lambda);
+auto findInCollection = [](const auto& collection, const auto& fn){
+    auto result = find_if(collection.begin(), collection.end(), fn);
     return (result == collection.end()) ? nullopt : optional(*result);
 };
 
-auto findInCollectionWithDefault = [](auto collection, auto defaultResult, auto lambda){
-    auto result = findInCollection(collection, lambda);
+auto findInCollectionWithDefault = [](const auto& collection, const auto& defaultResult, const auto& fn){
+    auto result = findInCollection(collection, fn);
     return result.has_value() ? (*result) : defaultResult;
 }; 
 
@@ -196,11 +194,11 @@ TEST_CASE("all columns"){
         {' ', ' ', 'O'}
     }};
 
-    Line expectedColumn0 = {'X', ' ', ' '};
+    Line expectedColumn0{'X', ' ', ' '};
     CHECK_EQ(expectedColumn0, boardResult.column(0));
-    Line expectedColumn1 = {'X', 'O', ' '};
+    Line expectedColumn1{'X', 'O', ' '};
     CHECK_EQ(expectedColumn1, boardResult.column(1));
-    Line expectedColumn2 = {'X', ' ', 'O'};
+    Line expectedColumn2{'X', ' ', 'O'};
     CHECK_EQ(expectedColumn2, boardResult.column(2));
 }
 
@@ -211,7 +209,7 @@ TEST_CASE("main diagonal"){
         {' ', ' ', 'O'}
     }};
 
-    Line expectedDiagonal = {'X', 'O', 'O'};
+    Line expectedDiagonal{'X', 'O', 'O'};
 
     CHECK_EQ(expectedDiagonal, boardResult.mainDiagonal());
 }
@@ -223,7 +221,7 @@ TEST_CASE("secondary diagonal"){
         {' ', ' ', 'O'}
     }};
 
-    Line expectedDiagonal = {'X', 'O', ' '};
+    Line expectedDiagonal{'X', 'O', ' '};
 
     CHECK_EQ(expectedDiagonal, boardResult.secondaryDiagonal());
 }
@@ -236,7 +234,7 @@ TEST_CASE("all lines, columns and diagonals"){
         {' ', ' ', 'O'}
     }};
 
-    Lines expected = {
+    Lines expected{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'},
@@ -253,7 +251,7 @@ TEST_CASE("all lines, columns and diagonals"){
 
 /*
 TEST_CASE("X wins"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -263,7 +261,7 @@ TEST_CASE("X wins"){
 }
 
 TEST_CASE("O wins"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {' ', 'O', ' '},
         {' ', 'O', 'X'}
@@ -273,7 +271,7 @@ TEST_CASE("O wins"){
 }
 
 TEST_CASE("draw"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {'O', 'O', 'X'},
         {'X', 'X', 'O'}
@@ -283,7 +281,7 @@ TEST_CASE("draw"){
 }
 
 TEST_CASE("in progress"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {'O', ' ', 'X'},
         {'X', 'X', 'O'}
@@ -300,11 +298,11 @@ TEST_CASE("Project column"){
         {' ', ' ', 'O'}
     }};
 
-    Line expected0 = {'X', ' ', ' '};
+    Line expected0 {'X', ' ', ' '};
     CHECK_EQ(expected0, boardResult.column(0));
-    Line expected1 = {'X', 'O', ' '};
+    Line expected1 {'X', 'O', ' '};
     CHECK_EQ(expected1, boardResult.column(1));
-    Line expected2 = {'X', ' ', 'O'};
+    Line expected2 {'X', ' ', 'O'};
     CHECK_EQ(expected2, boardResult.column(2));
 }
 
@@ -315,7 +313,7 @@ TEST_CASE("Range"){
         {' ', ' ', 'O'}
     };
 
-    vector<int> expected = {0, 1, 2};
+    vector<int> expected {0, 1, 2};
     CHECK_EQ(expected, toRange(collection));
     CHECK_EQ(expected, toRange(collection[0]));
 }
