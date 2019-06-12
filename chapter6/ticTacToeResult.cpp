@@ -7,9 +7,9 @@
 using namespace std;
 using namespace std::placeholders;
 
-typedef vector<char> Line;
-typedef vector<Line> Board;
-typedef vector<Line> Lines;
+using Line = vector<char>;
+using Board = vector<Line>;
+using Lines = vector<Line>;
 
 template<typename DestinationType>
 auto transformAll = [](const auto& source, auto lambda){
@@ -28,7 +28,7 @@ auto accumulateAll = [](const auto source, auto lambda){
     return accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), lambda);
 };
 
-auto allOfCollection = [](const auto& collection, auto lambda){
+auto all_of_collection = [](const auto& collection, auto lambda){
     return all_of(collection.begin(), collection.end(), lambda);
 };
 
@@ -132,7 +132,7 @@ auto allLinesColumnsAndDiagonals = [](const auto board) {
 };
 
 auto lineFilledWith = [](const auto line, const auto tokenToCheck){
-    return allOfCollection(line, [&tokenToCheck](const auto token){ return token == tokenToCheck;});
+    return all_of_collection(line, [&tokenToCheck](const auto token){ return token == tokenToCheck;});
 };
 
 auto lineFilledWithX = bind(lineFilledWith, _1, 'X'); 
@@ -156,7 +156,7 @@ auto fullLine = [](const auto& line){
 };
 
 auto full = [](const auto& board){
-    return allOfCollection(board, fullLine);
+    return all_of_collection(board, fullLine);
 };
 
 auto draw = [](const auto& board){
@@ -189,7 +189,7 @@ auto howDidXWin = [](const auto& board){
         {"secondary diagonal", secondaryDiagonal(board)},
         {"diagonal", secondaryDiagonal(board)},
     };
-    const auto xDidNotWin = make_pair("X did not win", Line());
+    const auto xDidNotWin = make_pair("X did not win", Line{});
     const auto xWon = [](const auto value){
         return lineFilledWithX(value.second);
     };
@@ -204,11 +204,11 @@ TEST_CASE("lines"){
         {' ', ' ', 'O'}
     };
 
-    Line expectedLine0 = {'X', 'X', 'X'};
+    Line expectedLine0{'X', 'X', 'X'};
     CHECK_EQ(expectedLine0, line(board, 0));
-    Line expectedLine1 = {' ', 'O', ' '};
+    Line expectedLine1{' ', 'O', ' '};
     CHECK_EQ(expectedLine1, line(board, 1));
-    Line expectedLine2 = {' ', ' ', 'O'};
+    Line expectedLine2{' ', ' ', 'O'};
     CHECK_EQ(expectedLine2, line(board, 2));
 }
 
@@ -219,47 +219,47 @@ TEST_CASE("all columns"){
         {' ', ' ', 'O'}
     };
 
-    Line expectedColumn0 = {'X', ' ', ' '};
+    Line expectedColumn0{'X', ' ', ' '};
     CHECK_EQ(expectedColumn0, column(board, 0));
-    Line expectedColumn1 = {'X', 'O', ' '};
+    Line expectedColumn1{'X', 'O', ' '};
     CHECK_EQ(expectedColumn1, column(board, 1));
-    Line expectedColumn2 = {'X', ' ', 'O'};
+    Line expectedColumn2{'X', ' ', 'O'};
     CHECK_EQ(expectedColumn2, column(board, 2));
 }
 
 TEST_CASE("main diagonal"){
-    Board board = {
+    Board board{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    Line expectedDiagonal = {'X', 'O', 'O'};
+    Line expectedDiagonal{'X', 'O', 'O'};
 
     CHECK_EQ(expectedDiagonal, mainDiagonal(board));
 }
 
 TEST_CASE("secondary diagonal"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    Line expectedDiagonal = {'X', 'O', ' '};
+    Line expectedDiagonal{'X', 'O', ' '};
 
     CHECK_EQ(expectedDiagonal, secondaryDiagonal(board));
 }
 
 
 TEST_CASE("all lines, columns and diagonals"){
-    Board board = {
+    Board board{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    Lines expected = {
+    Lines expected{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'},
@@ -275,7 +275,7 @@ TEST_CASE("all lines, columns and diagonals"){
 }
 
 TEST_CASE("line to string"){
-    Line line = {
+    Line line{
         ' ', 'X', 'O'
     };
 
@@ -283,12 +283,12 @@ TEST_CASE("line to string"){
 }
 
 TEST_CASE("board to lines string"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
-    vector<string> expected = {
+    vector<string> expected{
         "XXX",
         " O ",
         "  O"
@@ -298,7 +298,7 @@ TEST_CASE("board to lines string"){
 }
 
 TEST_CASE("board to string"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -309,18 +309,18 @@ TEST_CASE("board to string"){
 }
 
 TEST_CASE("Line filled with X"){
-    Line line = {'X', 'X', 'X'};
+    Line line{'X', 'X', 'X'};
 
     CHECK(lineFilledWithX(line));
 }
 
 TEST_CASE("Line not filled with X"){
-    CHECK(!lineFilledWithX(Line({'X', 'O', 'X'})));
-    CHECK(!lineFilledWithX(Line({'X', ' ', 'X'})));
+    CHECK(!lineFilledWithX(Line{'X', 'O', 'X'}));
+    CHECK(!lineFilledWithX(Line{'X', ' ', 'X'}));
 }
 
 TEST_CASE("X wins"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -330,7 +330,7 @@ TEST_CASE("X wins"){
 }
 
 TEST_CASE("O wins"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {' ', 'O', ' '},
         {' ', 'O', 'X'}
@@ -340,7 +340,7 @@ TEST_CASE("O wins"){
 }
 
 TEST_CASE("draw"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {'O', 'O', 'X'},
         {'X', 'X', 'O'}
@@ -350,7 +350,7 @@ TEST_CASE("draw"){
 }
 
 TEST_CASE("in progress"){
-    Board board = {
+    Board board {
         {'X', 'O', 'X'},
         {'O', ' ', 'X'},
         {'X', 'X', 'O'}
@@ -361,7 +361,7 @@ TEST_CASE("in progress"){
 
 
 TEST_CASE("how did X win"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -371,7 +371,7 @@ TEST_CASE("how did X win"){
 }
 
 TEST_CASE("X did not win"){
-    Board board = {
+    Board board {
         {'X', 'X', ' '},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -381,28 +381,28 @@ TEST_CASE("X did not win"){
 }
 
 TEST_CASE("Project column"){
-    Board board = {
+    Board board{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    Line expected0 = {'X', ' ', ' '};
+    Line expected0{'X', ' ', ' '};
     CHECK_EQ(expected0, column(board, 0));
-    Line expected1 = {'X', 'O', ' '};
+    Line expected1{'X', 'O', ' '};
     CHECK_EQ(expected1, column(board, 1));
-    Line expected2 = {'X', ' ', 'O'};
+    Line expected2{'X', ' ', 'O'};
     CHECK_EQ(expected2, column(board, 2));
 }
 
 TEST_CASE("Range"){
-    Board board = {
+    Board board{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
     };
 
-    vector<int> expected = {0, 1, 2};
+    vector<int> expected{0, 1, 2};
     CHECK_EQ(expected, toRange(board));
     CHECK_EQ(expected, toRange(board[0]));
 }

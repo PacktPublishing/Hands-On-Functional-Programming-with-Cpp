@@ -14,7 +14,7 @@ auto equalsChara = [](auto x){ return x == 'a';};
 auto notChard = [](auto x){ return x != 'd';};
 
 TEST_CASE("all_of"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
     CHECK(all_of(abc.begin(), abc.end(), trueForAll));
     CHECK(!all_of(abc.begin(), abc.end(), falseForAll));
@@ -27,7 +27,7 @@ auto all_of_collection = [](const auto& collection, auto lambda){
 };
 
 TEST_CASE("all_of_collection"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
     CHECK(all_of_collection(abc, trueForAll));
     CHECK(!all_of_collection(abc, falseForAll));
@@ -36,7 +36,7 @@ TEST_CASE("all_of_collection"){
 }
 
 TEST_CASE("any_of"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
     CHECK(any_of(abc.begin(), abc.end(), trueForAll));
     CHECK(!any_of(abc.begin(), abc.end(), falseForAll));
@@ -49,7 +49,7 @@ auto any_of_collection = [](const auto& collection, auto lambda){
 };
 
 TEST_CASE("any_of_collection"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
     CHECK(any_of_collection(abc, trueForAll));
     CHECK(!any_of_collection(abc, falseForAll));
@@ -58,53 +58,56 @@ TEST_CASE("any_of_collection"){
 }
 
 TEST_CASE("transform"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
     vector<char> aaa(3);
     transform(abc.begin(), abc.end(), aaa.begin(), [](auto element){return 'a';});
-    CHECK_EQ(vector<char>({'a', 'a', 'a'}), aaa);
+    CHECK_EQ(vector{'a', 'a', 'a'}, aaa);
+}
+
+TEST_CASE("transform-fixed") { 
+    const auto abc = vector{'a', 'b', 'c'}; 
+    vector<char> aaa; 
+    aaa.reserve(abc.size()); 
+    transform(abc.begin(), abc.end(), back_inserter(aaa), [](const char elem) { return 'a'; }); 
+    CHECK_EQ(vector{'a', 'a', 'a'}, aaa); 
 }
 
 template<typename Destination>
 auto transform_all = [](const auto& source, auto lambda){
-    Destination destination(source.size());
-    transform(source.begin(), source.end(), destination.begin(), lambda);
-    return destination;
-};
-
-template<>
-auto transform_all<string> = [](const auto& source, auto lambda){
-    string destination;
-    transform(source.begin(), source.end(),  back_inserter(destination), lambda);
+    Destination destination;
+    destination.reserve(source.size());
+    transform(source.begin(), source.end(), back_inserter(destination), lambda);
     return destination;
 };
 
 TEST_CASE("transform all"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc{'a', 'b', 'c'};
 
-    auto aaa = transform_all<vector<char>>(abc, [](auto element){return 'a';});
-    CHECK_EQ(vector<char>({'a', 'a', 'a'}), aaa);
+    auto aaa = transform_all<vector<char>>(abc, [](const char ){return 'a';});
+
+    CHECK_EQ(vector{'a', 'a', 'a'}, aaa);
 }
 
 auto turnAllToa = [](auto x) { return 'a';};
 
 auto makeCaps = [](auto x) { return toupper(x);};
 
-auto toNumber = [](auto x) { return (int)x - 'a' + 1;};
+auto toNumber = [](const char x) { return (int)x - 'a' + 1;};
 
 TEST_CASE("transform all"){
-    vector<char> abc = {'a', 'b', 'c'};
+    vector abc = {'a', 'b', 'c'};
 
-    CHECK_EQ(vector<char>({'a', 'a', 'a'}), transform_all<vector<char>>(abc, turnAllToa));
+    CHECK_EQ(vector{'a', 'a', 'a'}, transform_all<vector<char>>(abc, turnAllToa));
     CHECK_EQ("aaa", transform_all<string>(abc,turnAllToa));
     CHECK_EQ("ABC", transform_all<string>(abc, makeCaps));
 
-    vector<int> expected = {1, 2, 3};
+    vector expected{1, 2, 3};
     CHECK_EQ(expected, transform_all<vector<int>>(abc, toNumber));
 }
 
 TEST_CASE("accumulate"){
-    vector<int> values = {1, 12, 23, 45};
+    vector values{1, 12, 23, 45};
 
     auto add = [](int first, int second){return first + second;};
     int result = accumulate(values.begin(), values.end(), 0, add);
@@ -114,7 +117,7 @@ TEST_CASE("accumulate"){
     CHECK_EQ(1 + 12 + 23 + 45 + 100, resultWithInit100);
     
 
-    vector<string> strings = {"Alex", "is", "here"};
+    vector<string> strings{"Alex", "is", "here"};
     auto concatenate = [](const string first, const string second) -> string{
         return first + second;
     };
@@ -131,7 +134,7 @@ auto greaterThan11 = [](auto value) { return value > 11; };
 auto greaterThan50 = [](auto value) { return value > 50; };
 
 TEST_CASE("find if"){
-    vector<int> values = {1, 12, 23, 45};
+    vector<int> values{1, 12, 23, 45};
 
     auto result1 = find_if(values.begin(), values.end(), equals1);
     CHECK_EQ(*result1, 1);
@@ -149,7 +152,7 @@ auto findInCollection = [](const auto& collection, auto lambda){
 };
 
 TEST_CASE("find in collection"){
-    vector<int> values = {1, 12, 23, 45};
+    vector<int> values{1, 12, 23, 45};
 
     auto result1 = findInCollection(values, equals1);
     CHECK_EQ(result1, 1);
@@ -160,5 +163,3 @@ TEST_CASE("find in collection"){
     auto resultNotFound = findInCollection(values, greaterThan50);
     CHECK(!resultNotFound.has_value());
 }
-
-
