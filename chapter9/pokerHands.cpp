@@ -9,14 +9,15 @@ using namespace std;
 using namespace std::placeholders;
 
 template<typename DestinationType>
-auto transformAll = [](auto source, auto lambda){
+auto transformAll = [](const auto& source, const auto& fn){
     DestinationType result;
-    transform(source.begin(), source.end(), back_inserter(result), lambda);
+    result.reserve(source.size());
+    transform(source.begin(), source.end(), back_inserter(result), fn);
     return result;
 };
 
-auto allOfCollection = [](auto collection, auto lambda){
-    return all_of(collection.begin(), collection.end(), lambda);
+auto all_of_collection = [](const auto& collection, const auto& fn){
+    return all_of(collection.begin(), collection.end(), fn);
 };
 
 
@@ -28,14 +29,14 @@ auto allOfCollection = [](auto collection, auto lambda){
    S = ♠
 */
 
-typedef string Card;
-typedef vector<Card> Hand;
+using Card = string;
+using Hand = vector<Card>;
 
 auto endsWith = [](const std::string& str, const std::string& suffix){
     return str.size() >= suffix.size() && 0 == str.compare(str.size()-suffix.size(), suffix.size(), suffix);
 };
 
-auto suitOf = [](Card card){
+auto suitOf = [](const Card& card){
     return card.substr(1);
 };
 
@@ -56,62 +57,57 @@ const std::map<char, int> charsToCardValues = {
     {'A', 14},
 };
 
-auto valueOf = [](Card card){
+auto valueOf = [](const Card& card){
     return charsToCardValues.at(card.front());
 };
 
-auto toRange = [](auto const collection, int startValue){
+auto toRange = [](const auto& collection, const int startValue){
     vector<int> range(collection.size());
     iota(begin(range), end(range), startValue);
     return range;
 };
 
-auto areValuesConsecutive = [](const vector<int> allValuesInOrder){
-    vector<int> consecutiveValues = toRange(allValuesInOrder, allValuesInOrder.front());
+auto areValuesConsecutive = [](const vector<int>& allValuesInOrder){
+    const vector<int> consecutiveValues = toRange(allValuesInOrder, allValuesInOrder.front());
 
     return consecutiveValues == allValuesInOrder;
 };
 
-auto isSuitEqual = [](auto value, auto suitToCompareTo){
-    return value == suitToCompareTo;
+auto isSameSuit = [](const vector<string>& allSuits){
+    return std::equal(allSuits.begin() + 1, allSuits.end(), allSuits.begin());
 };
 
-auto isSameSuit = [](vector<string> allSuits){
-    auto sameSuit = bind(isSuitEqual, _1, allSuits.front()); 
-    return allOfCollection(allSuits, sameSuit);
-};
-
-auto has5Cards = [](Hand hand){
+auto has5Cards = [](const Hand& hand){
     return hand.size() == 5;
 };
 
-auto allValuesInOrder = [](Hand hand){
+auto allValuesInOrder = [](const Hand& hand){
     auto theValues = transformAll<vector<int>>(hand, valueOf);
     sort(theValues.begin(), theValues.end());
     return theValues;
 };
 
-auto allSuits = [](Hand hand){
+auto allSuits = [](const Hand& hand){
     return transformAll<vector<string>>(hand, suitOf);
 };
 
-auto isStraightFlush = [](Hand hand){
+auto isStraightFlush = [](const Hand& hand){
     return has5Cards(hand) && 
         isSameSuit(allSuits(hand)) && 
         areValuesConsecutive(allValuesInOrder(hand));
 };
 
-auto compareStraightFlushes = [](Hand first, Hand second){
-    int firstHandValue = allValuesInOrder(first).front();
-    int secondHandValue = allValuesInOrder(second).front();
+auto compareStraightFlushes = [](const Hand& first, const Hand& second){
+    const int firstHandValue = allValuesInOrder(first).front();
+    const int secondHandValue = allValuesInOrder(second).front();
     if(firstHandValue > secondHandValue) return 1;
     if(secondHandValue > firstHandValue) return -1;
     return 0;
 };
 
-auto comparePokerHands = [](Hand aliceHand, Hand bobHand){
+auto comparePokerHands = [](const Hand& aliceHand, const Hand& bobHand){
     if(isStraightFlush(bobHand) && isStraightFlush(aliceHand)){
-        int whichIsHigher = compareStraightFlushes(aliceHand, bobHand);
+        const int whichIsHigher = compareStraightFlushes(aliceHand, bobHand);
         if(whichIsHigher == 1) return "Alice wins with straight flush";
         if(whichIsHigher == -1) return "Bob wins with straight flush";
         return "Draw";
@@ -173,7 +169,7 @@ Output:
 */
 
 TEST_CASE("Bob wins with straight flush"){
-    Hand aliceHand{"2♠", "3♠", "4♠", "5♠", "9♠"};
+    const Hand aliceHand{"2♠", "3♠", "4♠", "5♠", "9♠"};
     Hand bobHand;
 
     SUBCASE("2 based straight flush"){
@@ -190,7 +186,7 @@ TEST_CASE("Bob wins with straight flush"){
 
     CAPTURE(bobHand);
 
-    auto result = comparePokerHands(aliceHand, bobHand);
+    const auto result = comparePokerHands(aliceHand, bobHand);
 
     CHECK_EQ("Bob wins with straight flush", result);
 }
@@ -208,7 +204,7 @@ Output:
 
 TEST_CASE("Alice and Bob have straight flushes but Alice wins with higher straight flush"){
     Hand aliceHand;
-    Hand bobHand{"2♣", "3♣", "4♣", "5♣", "6♣"};
+    const Hand bobHand{"2♣", "3♣", "4♣", "5♣", "6♣"};
 
     SUBCASE("3 based straight flush"){
         aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
@@ -216,7 +212,7 @@ TEST_CASE("Alice and Bob have straight flushes but Alice wins with higher straig
 
     CAPTURE(aliceHand);
 
-    auto result = comparePokerHands(aliceHand, bobHand);
+    const auto result = comparePokerHands(aliceHand, bobHand);
 
     CHECK_EQ("Alice wins with straight flush", result);
 }
@@ -233,7 +229,7 @@ Output:
 */
 
 TEST_CASE("Alice and Bob have straight flushes but Bob wins with higher straight flush"){
-    Hand aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+    Hand aliceHand{"3♠", "4♠", "5♠", "6♠", "7♠"};
     Hand bobHand;
 
     SUBCASE("3 based straight flush"){
@@ -263,7 +259,7 @@ TEST_CASE("Draw due to equal straight flushes"){
     Hand bobHand;
 
     SUBCASE("3 based straight flush"){
-        aliceHand = {"3♠", "4♠", "5♠", "6♠", "7♠"};
+        aliceHand= {"3♠", "4♠", "5♠", "6♠", "7♠"};
     };
 
     CAPTURE(aliceHand);
@@ -295,7 +291,7 @@ TEST_CASE("Hand is straight flush"){
         hand = {"4♥", "5♥", "6♥", "7♥", "8♥"};
     };
 
-    SUBCASE("4 based straight flush on hearts"){
+    SUBCASE("10 based straight flush on hearts"){
         hand = {"T♥", "J♥", "Q♥", "K♥", "A♥"};
     };
 
