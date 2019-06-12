@@ -12,9 +12,10 @@ using Board = vector<Line>;
 using Lines = vector<Line>;
 
 template<typename DestinationType>
-auto transformAll = [](const auto& source, auto lambda){
+auto transform_all = [](const auto& source, auto fn){
     DestinationType result;
-    transform(source.begin(), source.end(), back_inserter(result), lambda);
+    result.reserve(source.size());
+    transform(source.begin(), source.end(), back_inserter(result), fn);
     return result;
 };
 
@@ -24,98 +25,98 @@ auto toRange = [](const auto& collection){
     return range;
 };
 
-auto accumulateAll = [](const auto source, auto lambda){
-    return accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), lambda);
+auto accumulateAll = [](const auto source, auto fn){
+    return accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), fn);
 };
 
-auto all_of_collection = [](const auto& collection, auto lambda){
-    return all_of(collection.begin(), collection.end(), lambda);
+auto all_of_collection = [](const auto& collection, auto fn){
+    return all_of(collection.begin(), collection.end(), fn);
 };
 
-auto any_of_collection = [](const auto& collection, auto lambda){
-    return any_of(collection.begin(), collection.end(), lambda);
+auto any_of_collection = [](const auto& collection, auto fn){
+    return any_of(collection.begin(), collection.end(), fn);
 };
 
-auto lineToString = [](const auto line){
-    return transformAll<string>(line, [](auto const token) -> char { return token;});
+auto lineToString = [](const auto& line){
+    return transform_all<string>(line, [](auto const token) -> char { return token;});
 };
 
-auto boardToLinesString = [](const auto board){
-    return transformAll<vector<string>>(board, lineToString);
+auto boardToLinesString = [](const auto& board){
+    return transform_all<vector<string>>(board, lineToString);
 };
 
-auto boardToString = [](const auto board){
+auto boardToString = [](const auto& board){
     auto linesAsString = boardToLinesString(board);
     return accumulateAll(linesAsString, 
             [](string current, string lineAsString) { return current + lineAsString + "\n"; }
             );
 };
 
-auto concatenate = [](auto first, const auto second){
+auto concatenate = [](const auto& first, const auto& second){
     auto result(first);
     result.insert(result.end(), make_move_iterator(second.begin()), make_move_iterator(second.end()));
     return result;
 };
 
-auto concatenate3 = [](const auto first, const auto second, const auto third){
+auto concatenate3 = [](const auto& first, const auto& second, const auto& third){
     return concatenate(concatenate(first, second), third);
 };
 
-typedef pair<int, int> Coordinate;
+using Coordinate = pair<int, int>;
 
-auto accessAtCoordinates = [](const auto board, const Coordinate coordinate){
+auto accessAtCoordinates = [](const auto& board, const Coordinate& coordinate){
     return board[coordinate.first][coordinate.second];
 };
 
-auto projectCoordinates = [](const auto board, const auto coordinates){
+auto projectCoordinates = [](const auto& board, const auto& coordinates){
     auto boardElementFromCoordinates = bind(accessAtCoordinates, board, _1);
-    return transformAll<Line>(coordinates, boardElementFromCoordinates);
+    return transform_all<Line>(coordinates, boardElementFromCoordinates);
 };
 
-auto mainDiagonalCoordinates = [](const auto board){
+auto mainDiagonalCoordinates = [](const auto& board){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [](auto index){return make_pair(index, index);});
+    return transform_all<vector<Coordinate>>(range, [](const int index){return make_pair(index, index);});
 };
 
-auto secondaryDiagonalCoordinates = [](const auto board){
+auto secondaryDiagonalCoordinates = [](const auto& board){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [board](auto index){return make_pair(index, board.size() - index - 1);});
+    return transform_all<vector<Coordinate>>(range, [board](const int index){return make_pair(index, board.size() - index - 1);});
 };
 
-auto columnCoordinates = [](const auto board, const auto columnIndex){
+auto columnCoordinates = [](const auto& board, const int columnIndex){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [columnIndex](auto index){return make_pair(index, columnIndex);});
+    return transform_all<vector<Coordinate>>(range, [columnIndex](const int index){return make_pair(index, columnIndex);});
 };
 
-auto lineCoordinates = [](const auto board, const auto lineIndex){
+auto lineCoordinates = [](const auto& board, const int lineIndex){
     auto range = toRange(board);
-    return transformAll<vector<Coordinate>>(range, [lineIndex](auto index){return make_pair(lineIndex, index);});
+    return transform_all<vector<Coordinate>>(range, [lineIndex](const int index){return make_pair(lineIndex, index);});
 };
 
-auto mainDiagonal = [](const auto board){
+auto mainDiagonal = [](const auto& board){
     return projectCoordinates(board, mainDiagonalCoordinates(board));
 };
 
-auto secondaryDiagonal = [](const auto board){
+auto secondaryDiagonal = [](const auto& board){
     return projectCoordinates(board, secondaryDiagonalCoordinates(board));
 };
 
-auto column = [](const auto board, const auto columnIndex){
+auto column = [](const auto& board, const auto& columnIndex){
     return projectCoordinates(board, columnCoordinates(board, columnIndex));
 };
 
-auto line = [](const auto board, const int lineIndex){
+auto line = [](const auto& board, const int lineIndex){
     return projectCoordinates(board, lineCoordinates(board, lineIndex));
 };
 
-auto allLines = [](const auto board) {
+auto allLines = [](const auto& board) {
     auto range = toRange(board);
-    return transformAll<Lines>(range, [board](const auto index) { return line(board, index);});
+    return transform_all<Lines>(range, [board](const int index) { return line(board, index);});
 };
 
 auto allColumns = [](const auto board) {
     auto range = toRange(board);
-    return transformAll<Lines>(range, [board](const auto index) { return column(board, index);});
+    return transform_all<Lines>(range, [board](const int index) { return column(board, index);});
 };
 
 auto allDiagonals = [](const auto board) -> Lines {
@@ -123,16 +124,16 @@ auto allDiagonals = [](const auto board) -> Lines {
 };
 
 template<typename SourceType, typename DestinationType>
-auto applyAllLambdasToValue = [](const auto lambdas, const auto value){
-    return transformAll<DestinationType>(lambdas, [value](const auto lambda){ return lambda(value); } );
+auto applyAllLambdasToValue = [](const auto& fns, const auto& value){
+    return transform_all<DestinationType>(fns, [value](const auto& fn){ return fn(value); } );
 };
 
-auto allLinesColumnsAndDiagonals = [](const auto board) {
+auto allLinesColumnsAndDiagonals = [](const auto& board) {
     return concatenate3(allLines(board), allColumns(board), allDiagonals(board));
 };
 
-auto lineFilledWith = [](const auto line, const auto tokenToCheck){
-    return all_of_collection(line, [&tokenToCheck](const auto token){ return token == tokenToCheck;});
+auto lineFilledWith = [](const auto& line, const auto& tokenToCheck){
+    return all_of_collection(line, [&tokenToCheck](const auto& token){ return token == tokenToCheck;});
 };
 
 auto lineFilledWithX = bind(lineFilledWith, _1, 'X'); 
@@ -146,8 +147,8 @@ auto oWins = [](const auto& board){
     return any_of_collection(allLinesColumnsAndDiagonals(board), lineFilledWithO);
 };
 
-auto noneOf = [](const auto& collection, auto lambda){
-    return none_of(collection.begin(), collection.end(), lambda);
+auto noneOf = [](const auto& collection, const auto& fn){
+    return none_of(collection.begin(), collection.end(), fn);
 };
 
 auto isEmpty = [](const auto& token){return token == ' ';};
@@ -167,13 +168,13 @@ auto inProgress = [](const auto& board){
     return !full(board) && !xWins(board) && !oWins(board); 
 };
 
-auto findInCollection = [](const auto& collection, auto lambda){
-    auto result = find_if(collection.begin(), collection.end(), lambda);
+auto findInCollection = [](const auto& collection, const auto& fn){
+    auto result = find_if(collection.begin(), collection.end(), fn);
     return (result == collection.end()) ? nullopt : optional(*result);
 };
 
-auto findInCollectionWithDefault = [](const auto& collection, const auto& defaultResult, const auto& lambda){
-    const auto result = findInCollection(collection, lambda);
+auto findInCollectionWithDefault = [](const auto& collection, const auto& defaultResult, const auto& fn){
+    const auto result = findInCollection(collection, fn);
     return result.has_value() ? (*result) : defaultResult;
 }; 
 
@@ -198,7 +199,7 @@ auto howDidXWin = [](const auto& board){
 };
 
 TEST_CASE("lines"){
-    Board board = {
+    Board board{
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -213,7 +214,7 @@ TEST_CASE("lines"){
 }
 
 TEST_CASE("all columns"){
-    Board board = {
+    Board board {
         {'X', 'X', 'X'},
         {' ', 'O', ' '},
         {' ', ' ', 'O'}
@@ -402,7 +403,7 @@ TEST_CASE("Range"){
         {' ', ' ', 'O'}
     };
 
-    vector<int> expected{0, 1, 2};
+    vector expected{0, 1, 2};
     CHECK_EQ(expected, toRange(board));
     CHECK_EQ(expected, toRange(board[0]));
 }
