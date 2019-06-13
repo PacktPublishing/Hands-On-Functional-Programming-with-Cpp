@@ -14,5 +14,21 @@
         ],
         "directory": "/home/alexb/work/bookCode/chapter16",
         "file": "lambdas.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-std=c++2a",
+            "-Iinclude/",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-o",
+            "out/partialApplication",
+            "partialApplication.cpp"
+        ],
+        "directory": "/home/alexb/work/bookCode/chapter16",
+        "file": "partialApplication.cpp"
     }
 ]
