@@ -1,4 +1,4 @@
-all: computeSalaries strategy dependencyinjection autoincrement state maybe write
+all: computeSalaries strategy dependencyinjection autoincrement state maybe 
 
 .outputFolder:
 	mkdir -p out

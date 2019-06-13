@@ -87,7 +87,7 @@ struct Maybe{
     typedef function<optional<ValueType>(const ValueType, const ValueType)> OperationType;
     const optional<ValueType> value;
     
-    optional<ValueType> apply(const OperationType operation, const optional<ValueType> second){
+    optional<ValueType> apply(const OperationType operation, const optional<ValueType> second) const{
         if(value == nullopt || second == nullopt) return nullopt;
         return operation(value.value(), second.value());
     }
