@@ -26,7 +26,7 @@ class Calculator{
             return first % second;
         }
 
-        int revert() const {
+        int negateInt() const {
             return -first;
         }
 
@@ -59,7 +59,7 @@ TEST_CASE("Modulo"){
 TEST_CASE("Revert"){
     Calculator calculator(3, 2);
 
-    const int result = calculator.revert();
+    const int result = calculator.negateInt();
 
     CHECK_EQ(result, -3);
 }
@@ -76,7 +76,7 @@ auto mod = [](const auto first, const auto second){
     return first % second;
 };
 
-auto revert = [](const auto value){
+auto negateInt = [](const auto value){
     return -value;
 };
 
@@ -85,7 +85,7 @@ auto initialize = [] (const auto first, const auto second) -> map<string, functi
         {"add", bind(add, first, second)},
         {"multiply", bind(multiply, first, second)},
         {"mod", bind(mod, first, second)},
-        {"revert", bind(revert, first)}
+        {"negateInt", bind(negateInt, first)}
     };
 };
 
@@ -117,7 +117,7 @@ TEST_CASE("Modulo"){
 TEST_CASE("Revert"){
     auto calculator = initialize(3, 2);
 
-    const int result = calculator["revert"]();
+    const int result = calculator["negateInt"]();
 
     CHECK_EQ(result, -3);
 }

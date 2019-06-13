@@ -69,7 +69,7 @@ class BoardResult{
         const vector<Line> board;
 
     public:
-        BoardResult(vector<Line> board) : board{board}{
+        BoardResult(const vector<Line>& board) : board{board}{
         };
 
         Lines allLinesColumnsAndDiagonals() const {
