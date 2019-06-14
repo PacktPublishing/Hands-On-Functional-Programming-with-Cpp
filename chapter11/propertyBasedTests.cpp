@@ -10,28 +10,29 @@ using namespace std;
 using namespace std::placeholders;
 using namespace std::chrono;
 
-auto range = [](auto minValue, auto maxValue){
+auto range = [](const int minValue, const int maxValue){
     vector<int> range(maxValue - minValue + 1);
     iota(range.begin(), range.end(), minValue);
     return range;
 };
 
 template<typename DestinationType>
-auto transformAll = [](const auto& source, auto lambda){
+auto transformAll = [](const auto& source, const auto& fn){
     DestinationType result;
     result.resize(source.size());
-    transform(source.begin(), source.end(), result.begin(), lambda);
+    transform(source.begin(), source.end(), result.begin(), fn);
     return result;
 };
 
-auto power = [](int first, int second){
+auto power = [](const int first, const int second){
     return pow(first, second);
 };
 
-auto generate_ints = [](int min, int max){
+auto generate_ints = [](const int min, const int max){
     if(min > max) {
         return vector<int>();
     }
+
     if(min == max){
         return range(min, min);
     }
@@ -52,8 +53,8 @@ auto generate_ints = [](int min, int max){
     return values;
 };
 
-auto logMaxIntBaseX = [](int x) -> int{
-    auto maxInt = numeric_limits<int>::max() ;
+auto logMaxIntBaseX = [](const int x) -> int{
+    const int maxInt = numeric_limits<int>::max() ;
     return floor(log(maxInt) / log(x));
 };
 
@@ -62,12 +63,12 @@ auto generate_ints_greater_than_0 = bind(generate_ints, 0, numeric_limits<int>::
 auto generate_ints_greater_than_2_less_sqrt_maxInt = bind(generate_ints, 2, sqrt(numeric_limits<int>::max()));
 auto generate_ints_greater_than_sqrt_maxInt = bind(generate_ints, sqrt(numeric_limits<int>::max()) + 1, numeric_limits<int>::max());
 
-auto generate_exponent_less_than_log_maxInt = [](auto x){
+auto generate_exponent_less_than_log_maxInt = [](const int x){
     return generate_ints(1, logMaxIntBaseX(x));
 };
 
-auto all_of_collection = [](auto collection, auto lambda){
-    return all_of(collection.begin(), collection.end(), lambda);
+auto all_of_collection = [](const auto& collection, const auto& fn){
+    return all_of(collection.begin(), collection.end(), fn);
 };
 
 auto printGeneratedValues = [](const string& generatorName, const auto& values){
@@ -76,7 +77,7 @@ auto printGeneratedValues = [](const string& generatorName, const auto& values){
     cout << endl;
  };
 
-auto check_property = [](auto generator, auto property, string generatorName){
+auto check_property = [](const auto& generator, const auto& property, const string& generatorName){
     auto values = generator();
     printGeneratedValues(generatorName, values);
     bool pass = all_of_collection(values, property);
@@ -88,21 +89,21 @@ auto property_0_to_power_0_is_1 = [](){
     return power(0, 0) == 1;
 };
 
-auto prop_0_to_any_nonzero_int_is_0= [](int exponent){
+auto prop_0_to_any_nonzero_int_is_0= [](const int exponent){
     CHECK(exponent > 0);
     return power(0, exponent) == 0;
 };
 
-auto prop_anyIntToPower0Is1 = [](int base){
+auto prop_anyIntToPower0Is1 = [](const int base){
     CHECK(base > 0);
     return power(base, 0) == 1;
 };
 
-auto prop_any_int_to_power_1_is_the_value = [](int base){
+auto prop_any_int_to_power_1_is_the_value = [](const int base){
     return power(base, 1) == base;
 };
 
-auto prop_nextPowerOfXIsPreviousPowerOfXMultipliedByX = [](int x){
+auto prop_nextPowerOfXIsPreviousPowerOfXMultipliedByX = [](const int x){
     auto exponents = bind(generate_exponent_less_than_log_maxInt, x);
     return check_property(exponents, [x](auto y){ return power(x, y) == power(x, y - 1) * x;}, "generate exponents for " + to_string(x));
 };
