@@ -1,6 +1,8 @@
 #include <iostream>
 #include <functional>
 #include <numeric>
+#include <map>
+#include <optional>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
