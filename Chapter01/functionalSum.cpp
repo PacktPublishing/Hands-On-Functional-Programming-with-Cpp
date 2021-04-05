@@ -22,7 +22,7 @@ const bool isOdd(const int& value){
     return value %2 != 0;
 }
 
-template<typename T, template<class> class CollectionType>
+template<typename T, template<class...> class CollectionType>
 const T sum(const CollectionType<T>& input, const T& init = 0){
     return accumulate(input.begin(), input.end(), init);
 }
